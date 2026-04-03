@@ -1,7 +1,4 @@
 services:
   novalink-web:
     build: .
-    container_name: novalink-landing
-    ports:
-      - "80:80"
     restart: unless-stopped
