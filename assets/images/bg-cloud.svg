@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" fill="none">
+  <!-- Server rack lines -->
+  <rect x="180" y="60" width="240" height="20" rx="3" stroke="#20E070" stroke-width="2" opacity="0.65"/>
+  <rect x="180" y="90" width="240" height="20" rx="3" stroke="#20E070" stroke-width="2" opacity="0.6"/>
+  <rect x="180" y="120" width="240" height="20" rx="3" stroke="#20E070" stroke-width="2" opacity="0.55"/>
+  <rect x="180" y="150" width="240" height="20" rx="3" stroke="#20E070" stroke-width="2" opacity="0.5"/>
+  <!-- LED dots on rack units -->
+  <circle cx="198" cy="70" r="4" fill="#20E070" opacity="0.9"/>
+  <circle cx="198" cy="100" r="4" fill="#20E070" opacity="0.8"/>
+  <circle cx="198" cy="130" r="4" fill="#20E070" opacity="0.7"/>
+  <circle cx="198" cy="160" r="4" fill="#20E070" opacity="0.6"/>
+  <!-- Rack frame -->
+  <rect x="172" y="48" width="256" height="132" rx="5" stroke="#20E070" stroke-width="1.5" opacity="0.35"/>
+  <!-- Cloud shape -->
+  <ellipse cx="300" cy="278" rx="90" ry="34" stroke="#20E070" stroke-width="2" opacity="0.6"/>
+  <ellipse cx="260" cy="262" rx="50" ry="28" stroke="#20E070" stroke-width="1.5" opacity="0.45"/>
+  <ellipse cx="340" cy="258" rx="50" ry="28" stroke="#20E070" stroke-width="1.5" opacity="0.45"/>
+  <!-- Connection lines from rack to cloud -->
+  <line x1="255" y1="180" x2="255" y2="250" stroke="#20E070" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/>
+  <line x1="345" y1="180" x2="345" y2="250" stroke="#20E070" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/>
+  <!-- Data nodes -->
+  <circle cx="110" cy="320" r="20" stroke="#20E070" stroke-width="2" opacity="0.55"/>
+  <circle cx="490" cy="320" r="20" stroke="#20E070" stroke-width="2" opacity="0.55"/>
+  <line x1="130" y1="315" x2="212" y2="285" stroke="#20E070" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.45"/>
+  <line x1="470" y1="315" x2="388" y2="285" stroke="#20E070" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.45"/>
+  <!-- Corner accents -->
+  <circle cx="40" cy="40" r="3" fill="#20E070" opacity="0.4"/>
+  <circle cx="560" cy="40" r="3" fill="#20E070" opacity="0.4"/>
+  <circle cx="40" cy="360" r="3" fill="#20E070" opacity="0.4"/>
+  <circle cx="560" cy="360" r="3" fill="#20E070" opacity="0.4"/>
+</svg>
+
+  <!-- Server rack lines -->
+  <rect x="180" y="60" width="240" height="18" rx="3" stroke="#20E070" stroke-width="1.2" opacity="0.3"/>
+  <rect x="180" y="88" width="240" height="18" rx="3" stroke="#20E070" stroke-width="1.2" opacity="0.3"/>
+  <rect x="180" y="116" width="240" height="18" rx="3" stroke="#20E070" stroke-width="1.2" opacity="0.25"/>
+  <rect x="180" y="144" width="240" height="18" rx="3" stroke="#20E070" stroke-width="1.2" opacity="0.2"/>
+  <!-- LED dots on each rack unit -->
+  <circle cx="196" cy="69" r="3" fill="#20E070" opacity="0.6"/>
+  <circle cx="196" cy="97" r="3" fill="#20E070" opacity="0.5"/>
+  <circle cx="196" cy="125" r="3" fill="#20E070" opacity="0.4"/>
+  <circle cx="196" cy="153" r="3" fill="#20E070" opacity="0.3"/>
+  <!-- Cloud node top -->
+  <ellipse cx="300" cy="270" rx="80" ry="30" stroke="#20E070" stroke-width="1.5" opacity="0.35"/>
+  <!-- Connection lines from rack to cloud -->
+  <line x1="260" y1="162" x2="260" y2="252" stroke="#20E070" stroke-width="1" stroke-dasharray="4 4" opacity="0.3"/>
+  <line x1="340" y1="162" x2="340" y2="252" stroke="#20E070" stroke-width="1" stroke-dasharray="4 4" opacity="0.3"/>
+  <!-- Data nodes -->
+  <circle cx="120" cy="310" r="18" stroke="#20E070" stroke-width="1.2" opacity="0.3"/>
+  <circle cx="480" cy="310" r="18" stroke="#20E070" stroke-width="1.2" opacity="0.3"/>
+  <line x1="138" y1="310" x2="220" y2="270" stroke="#20E070" stroke-width="1" stroke-dasharray="3 3" opacity="0.2"/>
+  <line x1="462" y1="310" x2="380" y2="270" stroke="#20E070" stroke-width="1" stroke-dasharray="3 3" opacity="0.2"/>
+  <!-- Grid dots -->
+  <circle cx="40" cy="40" r="2" fill="#20E070" opacity="0.2"/>
+  <circle cx="560" cy="40" r="2" fill="#20E070" opacity="0.2"/>
+  <circle cx="40" cy="360" r="2" fill="#20E070" opacity="0.2"/>
+  <circle cx="560" cy="360" r="2" fill="#20E070" opacity="0.2"/>
+</svg>

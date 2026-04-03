@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" fill="none">
+  <!-- Shield large -->
+  <path d="M300 50 L410 95 L410 210 C410 290 300 350 300 350 C300 350 190 290 190 210 L190 95 Z" stroke="#20E070" stroke-width="2" opacity="0.35"/>
+  <!-- Shield medium -->
+  <path d="M300 82 L378 112 L378 205 C378 265 300 310 300 310 C300 310 222 265 222 205 L222 112 Z" stroke="#20E070" stroke-width="2" opacity="0.5"/>
+  <!-- Shield inner -->
+  <path d="M300 110 L355 130 L355 200 C355 245 300 275 300 275 C300 275 245 245 245 200 L245 130 Z" stroke="#20E070" stroke-width="1.5" opacity="0.3"/>
+  <!-- Outer scan ring -->
+  <circle cx="300" cy="200" r="155" stroke="#20E070" stroke-width="1" stroke-dasharray="7 5" opacity="0.3"/>
+  <!-- Scan line -->
+  <line x1="145" y1="200" x2="455" y2="200" stroke="#20E070" stroke-width="1" opacity="0.3"/>
+  <!-- Lock icon center -->
+  <rect x="276" y="198" width="48" height="36" rx="5" stroke="#20E070" stroke-width="2.5" opacity="0.8"/>
+  <path d="M286 198 v-10 a14 14 0 0 1 28 0 v10" stroke="#20E070" stroke-width="2.5" opacity="0.8"/>
+  <circle cx="300" cy="216" r="4" fill="#20E070" opacity="0.7"/>
+  <!-- Corner brackets -->
+  <path d="M50 50 h22 v-22" stroke="#20E070" stroke-width="2" opacity="0.55"/>
+  <path d="M550 50 h-22 v-22" stroke="#20E070" stroke-width="2" opacity="0.55"/>
+  <path d="M50 350 h22 v22" stroke="#20E070" stroke-width="2" opacity="0.55"/>
+  <path d="M550 350 h-22 v22" stroke="#20E070" stroke-width="2" opacity="0.55"/>
+  <!-- Side signal nodes -->
+  <circle cx="75" cy="200" r="6" stroke="#20E070" stroke-width="2" opacity="0.55"/>
+  <circle cx="525" cy="200" r="6" stroke="#20E070" stroke-width="2" opacity="0.55"/>
+  <line x1="81" y1="200" x2="145" y2="200" stroke="#20E070" stroke-width="1.5" opacity="0.4"/>
+  <line x1="455" y1="200" x2="519" y2="200" stroke="#20E070" stroke-width="1.5" opacity="0.4"/>
+</svg>
+
+  <!-- Shield large background -->
+  <path d="M300 60 L400 100 L400 200 C400 270 300 330 300 330 C300 330 200 270 200 200 L200 100 Z" stroke="#20E070" stroke-width="2" opacity="0.2"/>
+  <!-- Shield medium -->
+  <path d="M300 90 L370 118 L370 200 C370 250 300 295 300 295 C300 295 230 250 230 200 L230 118 Z" stroke="#20E070" stroke-width="1.5" opacity="0.25"/>
+  <!-- Outer ring -->
+  <circle cx="300" cy="200" r="140" stroke="#20E070" stroke-width="1" stroke-dasharray="6 4" opacity="0.18"/>
+  <!-- Scanning line -->
+  <line x1="160" y1="200" x2="440" y2="200" stroke="#20E070" stroke-width="1" opacity="0.2"/>
+  <!-- Lock icon center -->
+  <rect x="278" y="195" width="44" height="34" rx="4" stroke="#20E070" stroke-width="2" opacity="0.5"/>
+  <path d="M287 195 v-8 a13 13 0 0 1 26 0 v8" stroke="#20E070" stroke-width="2" opacity="0.5"/>
+  <!-- Corner brackets -->
+  <path d="M50 50 h20 v-20" stroke="#20E070" stroke-width="1.5" opacity="0.3"/>
+  <path d="M550 50 h-20 v-20" stroke="#20E070" stroke-width="1.5" opacity="0.3"/>
+  <path d="M50 350 h20 v20" stroke="#20E070" stroke-width="1.5" opacity="0.3"/>
+  <path d="M550 350 h-20 v20" stroke="#20E070" stroke-width="1.5" opacity="0.3"/>
+  <!-- Side nodes -->
+  <circle cx="80" cy="200" r="5" stroke="#20E070" stroke-width="1.5" opacity="0.3"/>
+  <circle cx="520" cy="200" r="5" stroke="#20E070" stroke-width="1.5" opacity="0.3"/>
+  <line x1="85" y1="200" x2="160" y2="200" stroke="#20E070" stroke-width="1" opacity="0.2"/>
+  <line x1="440" y1="200" x2="515" y2="200" stroke="#20E070" stroke-width="1" opacity="0.2"/>
+</svg>

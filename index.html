@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaLink — IoT, Electrónica y Seguridad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="config.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-white:   #FFFFFF;
+      --bg-dark:    #111111;
+      --accent:     #20E070;
+      --accent-dim: #18b35a;
+      --text-main:  #222222;
+      --text-muted: #666666;
+      --border:     #E4E4E4;
+      --card-bg:    #F7F7F7;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: var(--text-main);
+      background: var(--bg-white);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, nav, .cta {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── NAV ─────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 64px;
+      background: rgba(17, 17, 17, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(32, 224, 112, 0.12);
+    }
+
+    .nav-logo-img { display: flex; align-items: center; text-decoration: none; }
+    .nav-logo-img img { display: block; }
+
+    .nav-logo {
+      text-decoration: none;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #111 !important;
+      padding: 0.45rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 700 !important;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta:hover { background: var(--accent-dim) !important; color: #111 !important; }
+
+    /* ── HERO ────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(32,224,112,0.06) 0%, transparent 55%),
+        radial-gradient(circle at 80% 20%, rgba(32,224,112,0.04) 0%, transparent 45%),
+        linear-gradient(rgba(32,224,112,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32,224,112,0.04) 1px, transparent 1px);
+      background-size: auto, auto, 48px 48px, 48px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 5% 80px;
+      text-align: center;
+    }
+
+    .hero-inner { max-width: 820px; }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(32,224,112,0.35);
+      padding: 0.3rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.8rem;
+    }
+
+    #hero h1 {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 1.4rem;
+    }
+
+    #hero h1 .accent { color: var(--accent); }
+
+    #hero p {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: rgba(255,255,255,0.6);
+      max-width: 620px;
+      margin: 0 auto 2.4rem;
+      line-height: 1.7;
+    }
+
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: #111;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.85rem 2.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover { background: var(--accent-dim); transform: translateY(-2px); }
+
+    .btn-secondary {
+      display: inline-block;
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.85rem 2.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── FLOW DIAGRAM ────────────────────────────────────── */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-top: 3.5rem;
+      flex-wrap: wrap;
+    }
+
+    .flow-node {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(32,224,112,0.2);
+      border-radius: 10px;
+      padding: 1rem 1.4rem;
+      text-align: center;
+      min-width: 148px;
+    }
+
+    .flow-svg-icon {
+      width: 40px; height: 40px;
+      margin: 0 auto 0.5rem;
+      color: var(--accent);
+    }
+
+    .flow-svg-icon svg {
+      width: 100%; height: 100%;
+    }
+
+    .flow-node .label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .flow-node .sublabel {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 0.2rem;
+      line-height: 1.4;
+    }
+
+    .flow-arrow {
+      color: var(--accent);
+      width: 28px; height: 28px;
+      padding: 0 0.5rem;
+      opacity: 0.55;
+      flex-shrink: 0;
+    }
+
+    .flow-arrow svg { width: 100%; height: 100%; }
+
+    /* ── SECTIONS COMMON ─────────────────────────────────── */
+    section { padding: 96px 5%; }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    .section-header { margin-bottom: 3.5rem; }
+
+    /* ── CORE (3 COLS) ───────────────────────────────────── */
+    #core { background: var(--bg-white); }
+
+    .core-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .core-card {
+      position: relative;
+      overflow: hidden;
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 2.4rem 2rem 2rem;
+      transition: border-color 0.25s, transform 0.2s;
+    }
+
+    .core-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+
+    .core-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.45;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .core-card:hover .core-card-bg { opacity: 0.65; }
+
+    .core-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.65) 100%);
+      pointer-events: none;
+    }
+
+    .core-card-content { position: relative; z-index: 1; }
+
+    .core-icon {
+      width: 48px; height: 48px;
+      background: rgba(32,224,112,0.08);
+      border: 1px solid rgba(32,224,112,0.25);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.3rem;
+      color: var(--accent);
+    }
+
+    .core-icon img {
+      width: 24px; height: 24px;
+      filter: invert(74%) sepia(60%) saturate(500%) hue-rotate(95deg) brightness(110%);
+    }
+
+    .core-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.7rem;
+      color: #fff;
+    }
+
+    .core-card p {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+    }
+
+    /* ── WHY ─────────────────────────────────────────────── */
+    #why {
+      background: var(--bg-dark);
+      text-align: center;
+    }
+
+    #why .section-title { color: #fff; }
+
+    #why blockquote {
+      max-width: 780px;
+      margin: 0 auto;
+      font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+      color: rgba(255,255,255,0.75);
+      line-height: 1.75;
+      font-style: normal;
+      border-left: 3px solid var(--accent);
+      text-align: left;
+      padding: 1.5rem 2rem;
+      background: rgba(32,224,112,0.04);
+      border-radius: 0 10px 10px 0;
+    }
+
+    #why blockquote strong { color: var(--accent); font-weight: 700; }
+
+    .why-stats {
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+      margin-top: 3.5rem;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Inter', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.3rem;
+    }
+
+    /* ── SERVICES ────────────────────────────────────────── */
+    #services { background: var(--bg-white); }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .service-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+      transition: border-color 0.25s, box-shadow 0.2s;
+    }
+
+    .service-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(32,224,112,0.06);
+    }
+
+    .service-num {
+      font-family: 'Inter', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: rgba(32,224,112,0.2);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .service-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .service-card p {
+      font-size: 0.93rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ── CONTACT ─────────────────────────────────────────── */
+    #contact { background: #F4F4F4; }
+
+    .contact-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 5rem;
+      align-items: start;
+      max-width: 1000px;
+    }
+
+    .contact-info h2 { margin-bottom: 1rem; }
+
+    .contact-info p {
+      color: var(--text-muted);
+      font-size: 0.97rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.8rem;
+    }
+
+    .contact-detail .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    form { display: flex; flex-direction: column; gap: 1.1rem; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+
+    form input,
+    form select,
+    form textarea {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+
+    form input:focus,
+    form select:focus,
+    form textarea:focus { border-color: var(--accent); }
+
+    form textarea { resize: vertical; min-height: 120px; }
+
+    form .btn-primary { align-self: flex-start; }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
+    footer {
+      background: var(--bg-dark);
+      padding: 3rem 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      border-top: 1px solid rgba(32,224,112,0.1);
+    }
+
+    .footer-logo {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .footer-logo span { color: var(--accent); }
+
+    footer p {
+      color: rgba(255,255,255,0.35);
+      font-size: 0.85rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .contact-wrapper { grid-template-columns: 1fr; gap: 2.5rem; }
+      footer { flex-direction: column; text-align: center; }
+    }
+
+    /* ── SCROLL ANIMATIONS ───────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">Nova<span>Link</span></a>
+    <ul class="nav-links">
+      <li><a href="#core">Especialidad</a></li>
+      <li><a href="#why">Nosotros</a></li>
+      <li><a href="#services">Servicios</a></li>
+      <li><a href="#contact" class="nav-cta">Cotizar</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">Hogares · Empresas · Ciudades</div>
+      <h1>Hacemos que tus espacios y negocios trabajen <span class="accent">solos.</span></h1>
+      <p>Desde una casa que se controla con el celular hasta cámaras de seguridad conectadas o semáforos que se adaptan al tráfico en tiempo real — NovaLink lo instala, lo conecta y lo mantiene funcionando.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">Quiero una solución</a>
+        <a href="#core" class="btn-secondary">Ver ejemplos</a>
+      </div>
+
+      <!-- Solution examples flow -->
+      <div class="flow-diagram">
+        <div class="flow-node">
+          <div class="flow-svg-icon">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 13L16 4l12 9v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/>
+              <path d="M11 30V18h10v12"/>
+            </svg>
+          </div>
+          <div class="label">Casa Inteligente</div>
+          <div class="sublabel">Luces, clima y puertas desde tu celular</div>
+        </div>
+        <div class="flow-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/>
+          </svg>
+        </div>
+        <div class="flow-node">
+          <div class="flow-svg-icon">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="16" cy="16" r="12"/>
+              <circle cx="16" cy="10" r="3"/>
+              <circle cx="16" cy="22" r="3"/>
+              <line x1="16" y1="13" x2="16" y2="19"/>
+            </svg>
+          </div>
+          <div class="label">Seguridad 24/7</div>
+          <div class="sublabel">Cámaras y alarmas conectadas</div>
+        </div>
+        <div class="flow-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/>
+          </svg>
+        </div>
+        <div class="flow-node">
+          <div class="flow-svg-icon">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="26" height="18" rx="2"/>
+              <line x1="3" y1="11" x2="29" y2="11"/>
+              <rect x="8" y="15" width="6" height="4" rx="1"/>
+              <rect x="18" y="15" width="6" height="4" rx="1"/>
+            </svg>
+          </div>
+          <div class="label">Panel de Control</div>
+          <div class="sublabel">Todo visible desde una sola pantalla</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORE -->
+  <section id="core">
+    <div class="section-header reveal">
+      <span class="section-tag">Nuestra Especialidad</span>
+      <h2 class="section-title">El núcleo de lo que hacemos</h2>
+      <p class="section-sub">Cubrimos el ciclo completo: desde el chip hasta el dashboard, pasando por la capa de seguridad.</p>
+    </div>
+    <div class="core-grid">
+      <div class="core-card reveal">
+        <div class="core-card-bg" style="background-image:url('assets/images/IOT.jpg')"></div>
+        <div class="core-card-overlay"></div>
+        <div class="core-card-content">
+          <div class="core-icon">
+            <img src="assets/icons/hardware-iot.svg" alt="Hardware e IoT" />
+          </div>
+          <h3>Dispositivos y Conectividad</h3>
+          <p>Instalamos y conectamos sensores, cámaras y equipos electrónicos para que tus espacios o procesos funcionen de forma automática, sin que tengas que hacer nada manualmente.</p>
+        </div>
+      </div>
+      <div class="core-card reveal">
+        <div class="core-card-bg" style="background-image:url('assets/images/softwaredev%26cloud.jpg')"></div>
+        <div class="core-card-overlay"></div>
+        <div class="core-card-content">
+          <div class="core-icon">
+            <img src="assets/icons/software-cloud.svg" alt="Software y Cloud" />
+          </div>
+          <h3>Software &amp; Aplicaciones</h3>
+          <p>Desarrollo de aplicaciones a medida y paneles de control en la nube. Consulta el estado de tus sistemas desde el celular o computadora, en cualquier momento y desde cualquier lugar.</p>
+        </div>
+      </div>
+      <div class="core-card reveal">
+        <div class="core-card-bg" style="background-image:url('assets/images/security.jpg')"></div>
+        <div class="core-card-overlay"></div>
+        <div class="core-card-content">
+          <div class="core-icon">
+            <img src="assets/icons/security.svg" alt="Seguridad Integral" />
+          </div>
+          <h3>Seguridad Integral</h3>
+          <p>Videovigilancia profesional, control de acceso, alarmas y seguridad residencial e industrial inteligente. Protegemos tu patrimonio y garantizamos que tu información viaje segura.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section id="why">
+    <div class="section-header reveal" style="text-align:center;">
+      <span class="section-tag">¿Por qué NovaLink?</span>
+      <h2 class="section-title">No somos una agencia de software más.</h2>
+    </div>
+    <blockquote class="reveal">
+      "A diferencia de las agencias de software tradicionales, en <strong>NovaLink</strong> entendemos el hardware desde su base electrónica. No solo creamos la app; construimos el dispositivo, lo conectamos de forma segura y garantizamos que tus datos lleguen íntegros a la nube."
+    </blockquote>
+    <div class="why-stats reveal">
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Ciclo cubierto</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">E2E</div>
+        <div class="stat-label">Cifrado extremo a extremo</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Soporte técnico</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="section-header reveal">
+      <span class="section-tag">Servicios</span>
+      <h2 class="section-title">Todo lo que necesitas, bajo un mismo techo.</h2>
+      <p class="section-sub">Desde la adquisición del equipo hasta el mantenimiento continuo del sistema.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-num">01</div>
+        <div>
+          <h3>Reventa & Configuración</h3>
+          <p>Equipos electrónicos de alta gama seleccionados, configurados y listos para operar desde el primer día. Sin fricciones de integración.</p>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-num">02</div>
+        <div>
+          <h3>Implementación IoT</h3>
+          <p>Llevamos tu idea desde el prototipo hasta la producción industrial. Validación, escalado y despliegue completo de infraestructura IoT.</p>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-num">03</div>
+        <div>
+          <h3>Mantenimiento Técnico</h3>
+          <p>Soporte preventivo y correctivo para sistemas electrónicos y de software. Monitoreo proactivo para minimizar tiempos de inactividad.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-wrapper">
+      <div class="contact-info reveal">
+        <span class="section-tag">Contacto</span>
+        <h2 class="section-title">Cuéntanos tu proyecto.</h2>
+        <p>Analizamos tu caso sin costo y te proponemos la arquitectura más eficiente para tus objetivos.</p>
+        <div class="contact-detail"><span class="dot"></span> Respuesta en menos de 24 horas</div>
+        <div class="contact-detail"><span class="dot"></span> Consultoría técnica inicial gratuita</div>
+        <div class="contact-detail"><span class="dot"></span> Presupuesto detallado sin compromiso</div>
+      </div>
+      <form id="contact-form" class="reveal" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <input id="f-name" type="text" placeholder="Nombre completo" required />
+          <input id="f-company" type="text" placeholder="Empresa" />
+        </div>
+        <input id="f-email" type="email" placeholder="Correo electrónico" required />
+        <select id="f-type" required>
+          <option value="" disabled selected>Tipo de Proyecto</option>
+          <option value="iot">Dispositivos / IoT / Hardware</option>
+          <option value="software">Software / Aplicaciones / Cloud</option>
+          <option value="security">Seguridad Integral / Videovigilancia</option>
+          <option value="other">Otro</option>
+        </select>
+        <textarea id="f-message" placeholder="Cuéntanos sobre tu proyecto…"></textarea>
+        <div id="form-feedback" style="display:none; font-size:0.9rem; padding:0.6rem 0;"></div>
+        <button type="submit" class="btn-primary">Enviar Solicitud →</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Nova<span>Link</span></div>
+    <p>© 2026 NovaLink. Todos los derechos reservados.</p>
+    <ul class="footer-links">
+      <li><a href="#core">Especialidad</a></li>
+      <li><a href="#services">Servicios</a></li>
+      <li><a href="#contact">Contacto</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.12 }
+    );
+    reveals.forEach(el => observer.observe(el));
+
+    // Staggered cards
+    document.querySelectorAll('.core-grid .core-card, .services-grid .service-card').forEach((el, i) => {
+      el.style.transitionDelay = `${i * 0.1}s`;
+    });
+
+    // Form submit — integración con Odoo via config.js
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const btn     = e.target.querySelector('button[type="submit"]');
+      const feedback = document.getElementById('form-feedback');
+
+      btn.disabled    = true;
+      btn.textContent = 'Enviando…';
+
+      const formData = {
+        name:        document.getElementById('f-name').value.trim(),
+        company:     document.getElementById('f-company').value.trim(),
+        email:       document.getElementById('f-email').value.trim(),
+        projectType: document.getElementById('f-type').value,
+        message:     document.getElementById('f-message').value.trim(),
+      };
+
+      const result = await submitToOdoo(formData);
+
+      feedback.style.display = 'block';
+      if (result.ok) {
+        feedback.style.color   = '#20E070';
+        feedback.textContent   = result.message;
+        btn.textContent        = '✓ Solicitud enviada';
+        btn.style.background   = '#18b35a';
+        const redirect = NOVALINK_CONFIG.form.redirectAfterSubmit;
+        if (redirect) setTimeout(() => { window.location.href = redirect; }, 1800);
+      } else {
+        feedback.style.color = '#ff5c5c';
+        feedback.textContent = result.message;
+        btn.disabled         = false;
+        btn.textContent      = 'Enviar Solicitud →';
+      }
+    }
+  </script>
+</body>
+</html>
