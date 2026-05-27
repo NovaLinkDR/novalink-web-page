@@ -1,822 +1,968 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NovaLink — IoT, Electrónica y Seguridad</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
-  <script src="config.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg-white:   #FFFFFF;
-      --bg-dark:    #111111;
-      --accent:     #20E070;
-      --accent-dim: #18b35a;
-      --text-main:  #222222;
-      --text-muted: #666666;
-      --border:     #E4E4E4;
-      --card-bg:    #F7F7F7;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Roboto', sans-serif;
-      color: var(--text-main);
-      background: var(--bg-white);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    h1, h2, h3, h4, nav, .cta {
-      font-family: 'Inter', sans-serif;
-    }
-
-    /* ── NAV ─────────────────────────────────────────────── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 5%;
-      height: 64px;
-      background: rgba(17, 17, 17, 0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(32, 224, 112, 0.12);
-    }
-
-    .nav-logo-img { display: flex; align-items: center; text-decoration: none; }
-    .nav-logo-img img { display: block; }
-
-    .nav-logo {
-      text-decoration: none;
-      font-size: 1.4rem;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: -0.5px;
-    }
-
-    .nav-logo span { color: var(--accent); }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: rgba(255,255,255,0.75);
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--accent); }
-
-    .nav-cta {
-      background: var(--accent);
-      color: #111 !important;
-      padding: 0.45rem 1.2rem;
-      border-radius: 6px;
-      font-weight: 700 !important;
-      transition: background 0.2s !important;
-    }
-
-    .nav-cta:hover { background: var(--accent-dim) !important; color: #111 !important; }
-
-    /* ── HERO ────────────────────────────────────────────── */
-    #hero {
-      min-height: 100vh;
-      background-color: var(--bg-dark);
-      background-image:
-        radial-gradient(circle at 20% 50%, rgba(32,224,112,0.06) 0%, transparent 55%),
-        radial-gradient(circle at 80% 20%, rgba(32,224,112,0.04) 0%, transparent 45%),
-        linear-gradient(rgba(32,224,112,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(32,224,112,0.04) 1px, transparent 1px);
-      background-size: auto, auto, 48px 48px, 48px 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 100px 5% 80px;
-      text-align: center;
-    }
-
-    .hero-inner { max-width: 820px; }
-
-    .hero-badge {
-      display: inline-block;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--accent);
-      border: 1px solid rgba(32,224,112,0.35);
-      padding: 0.3rem 1rem;
-      border-radius: 100px;
-      margin-bottom: 1.8rem;
-    }
-
-    #hero h1 {
-      font-size: clamp(2.4rem, 5vw, 4rem);
-      font-weight: 900;
-      color: #fff;
-      line-height: 1.1;
-      letter-spacing: -1px;
-      margin-bottom: 1.4rem;
-    }
-
-    #hero h1 .accent { color: var(--accent); }
-
-    #hero p {
-      font-size: clamp(1rem, 2vw, 1.2rem);
-      color: rgba(255,255,255,0.6);
-      max-width: 620px;
-      margin: 0 auto 2.4rem;
-      line-height: 1.7;
-    }
-
-    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-
-    .btn-primary {
-      display: inline-block;
-      background: var(--accent);
-      color: #111;
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.85rem 2.2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-primary:hover { background: var(--accent-dim); transform: translateY(-2px); }
-
-    .btn-secondary {
-      display: inline-block;
-      background: transparent;
-      color: rgba(255,255,255,0.8);
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 0.85rem 2.2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      border: 1px solid rgba(255,255,255,0.2);
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* ── FLOW DIAGRAM ────────────────────────────────────── */
-    .flow-diagram {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0;
-      margin-top: 3.5rem;
-      flex-wrap: wrap;
-    }
-
-    .flow-node {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(32,224,112,0.2);
-      border-radius: 10px;
-      padding: 1rem 1.4rem;
-      text-align: center;
-      min-width: 148px;
-    }
-
-    .flow-svg-icon {
-      width: 40px; height: 40px;
-      margin: 0 auto 0.5rem;
-      color: var(--accent);
-    }
-
-    .flow-svg-icon svg {
-      width: 100%; height: 100%;
-    }
-
-    .flow-node .label {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-
-    .flow-node .sublabel {
-      font-size: 0.68rem;
-      color: rgba(255,255,255,0.4);
-      margin-top: 0.2rem;
-      line-height: 1.4;
-    }
-
-    .flow-arrow {
-      color: var(--accent);
-      width: 28px; height: 28px;
-      padding: 0 0.5rem;
-      opacity: 0.55;
-      flex-shrink: 0;
-    }
-
-    .flow-arrow svg { width: 100%; height: 100%; }
-
-    /* ── SECTIONS COMMON ─────────────────────────────────── */
-    section { padding: 96px 5%; }
-
-    .section-tag {
-      display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.8rem;
-    }
-
-    .section-title {
-      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-      font-weight: 900;
-      color: var(--text-main);
-      letter-spacing: -0.5px;
-      line-height: 1.15;
-      margin-bottom: 1rem;
-    }
-
-    .section-sub {
-      font-size: 1.05rem;
-      color: var(--text-muted);
-      max-width: 560px;
-      line-height: 1.7;
-    }
-
-    .section-header { margin-bottom: 3.5rem; }
-
-    /* ── CORE (3 COLS) ───────────────────────────────────── */
-    #core { background: var(--bg-white); }
-
-    .core-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .core-card {
-      position: relative;
-      overflow: hidden;
-      background: #111;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px;
-      padding: 2.4rem 2rem 2rem;
-      transition: border-color 0.25s, transform 0.2s;
-    }
-
-    .core-card:hover { border-color: var(--accent); transform: translateY(-4px); }
-
-    .core-card-bg {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      opacity: 0.45;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-
-    .core-card:hover .core-card-bg { opacity: 0.65; }
-
-    .core-card-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(160deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.65) 100%);
-      pointer-events: none;
-    }
-
-    .core-card-content { position: relative; z-index: 1; }
-
-    .core-icon {
-      width: 48px; height: 48px;
-      background: rgba(32,224,112,0.08);
-      border: 1px solid rgba(32,224,112,0.25);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1.3rem;
-      color: var(--accent);
-    }
-
-    .core-icon img {
-      width: 24px; height: 24px;
-      filter: invert(74%) sepia(60%) saturate(500%) hue-rotate(95deg) brightness(110%);
-    }
-
-    .core-card h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 0.7rem;
-      color: #fff;
-    }
-
-    .core-card p {
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.7;
-    }
-
-    /* ── WHY ─────────────────────────────────────────────── */
-    #why {
-      background: var(--bg-dark);
-      text-align: center;
-    }
-
-    #why .section-title { color: #fff; }
-
-    #why blockquote {
-      max-width: 780px;
-      margin: 0 auto;
-      font-size: clamp(1.1rem, 2.2vw, 1.4rem);
-      color: rgba(255,255,255,0.75);
-      line-height: 1.75;
-      font-style: normal;
-      border-left: 3px solid var(--accent);
-      text-align: left;
-      padding: 1.5rem 2rem;
-      background: rgba(32,224,112,0.04);
-      border-radius: 0 10px 10px 0;
-    }
-
-    #why blockquote strong { color: var(--accent); font-weight: 700; }
-
-    .why-stats {
-      display: flex;
-      justify-content: center;
-      gap: 4rem;
-      flex-wrap: wrap;
-      margin-top: 3.5rem;
-    }
-
-    .stat { text-align: center; }
-
-    .stat-num {
-      font-family: 'Inter', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 900;
-      color: var(--accent);
-    }
-
-    .stat-label {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.5);
-      margin-top: 0.3rem;
-    }
-
-    /* ── SERVICES ────────────────────────────────────────── */
-    #services { background: var(--bg-white); }
-
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .service-card {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 2rem;
-      display: flex;
-      gap: 1.2rem;
-      align-items: flex-start;
-      transition: border-color 0.25s, box-shadow 0.2s;
-    }
-
-    .service-card:hover {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(32,224,112,0.06);
-    }
-
-    .service-num {
-      font-family: 'Inter', sans-serif;
-      font-size: 2rem;
-      font-weight: 900;
-      color: rgba(32,224,112,0.2);
-      line-height: 1;
-      flex-shrink: 0;
-    }
-
-    .service-card h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .service-card p {
-      font-size: 0.93rem;
-      color: var(--text-muted);
-      line-height: 1.65;
-    }
-
-    /* ── CONTACT ─────────────────────────────────────────── */
-    #contact { background: #F4F4F4; }
-
-    .contact-wrapper {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 5rem;
-      align-items: start;
-      max-width: 1000px;
-    }
-
-    .contact-info h2 { margin-bottom: 1rem; }
-
-    .contact-info p {
-      color: var(--text-muted);
-      font-size: 0.97rem;
-      line-height: 1.7;
-      margin-bottom: 2rem;
-    }
-
-    .contact-detail {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 0.8rem;
-    }
-
-    .contact-detail .dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      flex-shrink: 0;
-    }
-
-    form { display: flex; flex-direction: column; gap: 1.1rem; }
-
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
-
-    form input,
-    form select,
-    form textarea {
-      width: 100%;
-      padding: 0.85rem 1rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: 'Roboto', sans-serif;
-      font-size: 0.95rem;
-      color: var(--text-main);
-      background: #fff;
-      outline: none;
-      transition: border-color 0.2s;
-      appearance: none;
-    }
-
-    form input:focus,
-    form select:focus,
-    form textarea:focus { border-color: var(--accent); }
-
-    form textarea { resize: vertical; min-height: 120px; }
-
-    form .btn-primary { align-self: flex-start; }
-
-    /* ── FOOTER ──────────────────────────────────────────── */
-    footer {
-      background: var(--bg-dark);
-      padding: 3rem 5%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      border-top: 1px solid rgba(32,224,112,0.1);
-    }
-
-    .footer-logo {
-      font-family: 'Inter', sans-serif;
-      font-size: 1.3rem;
-      font-weight: 900;
-      color: #fff;
-    }
-
-    .footer-logo span { color: var(--accent); }
-
-    footer p {
-      color: rgba(255,255,255,0.35);
-      font-size: 0.85rem;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-    }
-
-    .footer-links a {
-      color: rgba(255,255,255,0.4);
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover { color: var(--accent); }
-
-    /* ── RESPONSIVE ──────────────────────────────────────── */
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .form-row { grid-template-columns: 1fr; }
-      .contact-wrapper { grid-template-columns: 1fr; gap: 2.5rem; }
-      footer { flex-direction: column; text-align: center; }
-    }
-
-    /* ── SCROLL ANIMATIONS ───────────────────────────────── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.55s ease, transform 0.55s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaLink — Automatiza tu empresa en minutos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F8F9FA;
+  --bg-dark: #000000;
+  --bg-card: #FFFFFF;
+  --accent: #20E070;
+  --accent-hover: #1cc060;
+  --accent-glow: rgba(32,224,112,0.18);
+  --text: #1A1A2E;
+  --text-muted: #6B7280;
+  --text-light: #9CA3AF;
+  --border: #E5E7EB;
+  --border-light: #F3F4F6;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.07);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.10);
+  --max-width: 1200px;
+  --section-gap: clamp(48px, 8vw, 100px);
+  --nav-h: 68px;
+  --font-heading: 'Poppins', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:system-ui,-apple-system,sans-serif;color:var(--text);background:var(--bg);line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--font-heading);line-height:1.2}
+h2{font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;letter-spacing:-0.02em}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+.section{padding:var(--section-gap) 0}
+.section-label{display:inline-block;font-family:var(--font-heading);font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem}
+.section-header{text-align:center;margin-bottom:clamp(32px,5vw,56px)}
+.section-header h2{margin-bottom:0.75rem}
+.section-header p{color:var(--text-muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);background:rgba(0,0,0,0.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.08);transition:box-shadow 0.3s}
+nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.3)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%}
+.nav-logo{font-family:var(--font-heading);font-size:1.35rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.nav-logo img{height:36px;width:auto}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+.nav-links a{font-size:0.9rem;font-weight:500;color:rgba(255,255,255,0.7);transition:color 0.2s;position:relative}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-cta{background:var(--accent);color:#000!important;padding:9px 20px;border-radius:var(--radius-sm);font-weight:600!important;transition:background 0.2s,transform 0.15s}
+.nav-cta:hover{background:var(--accent-hover);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:8px;z-index:101}
+.hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:0.3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+@media(max-width:840px){
+  .nav-links{position:fixed;top:0;right:-100%;width:280px;height:100vh;flex-direction:column;background:#000;padding:100px 32px 32px;gap:24px;box-shadow:-8px 0 32px rgba(0,0,0,0.4);transition:right 0.35s cubic-bezier(0.4,0,0.2,1);align-items:flex-start}
+  .nav-links.open{right:0}
+  .hamburger{display:flex}
+}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:var(--nav-h);position:relative;overflow:hidden;background:var(--bg-dark)}
+.hero-bg{position:absolute;inset:0;overflow:hidden}
+.hero-grain{position:absolute;inset:0;opacity:0.06;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")}
+.hero-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,var(--accent-glow) 0%,transparent 70%);top:10%;left:50%;transform:translateX(-50%);animation:glowPulse 6s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{opacity:0.5;transform:translateX(-50%) scale(1)}50%{opacity:0.8;transform:translateX(-50%) scale(1.15)}}
+.hero-nodes{position:absolute;inset:0}
+.hero-node{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.35);animation:nodeFloat 8s ease-in-out infinite}
+.hero-node:nth-child(1){top:20%;left:15%;animation-delay:0s}
+.hero-node:nth-child(2){top:30%;left:80%;animation-delay:1.5s;width:4px;height:4px}
+.hero-node:nth-child(3){top:60%;left:25%;animation-delay:3s;width:5px;height:5px}
+.hero-node:nth-child(4){top:70%;left:75%;animation-delay:4.5s}
+.hero-node:nth-child(5){top:40%;left:45%;animation-delay:2s;width:7px;height:7px}
+.hero-node:nth-child(6){top:80%;left:55%;animation-delay:5s;width:4px;height:4px}
+.hero-node:nth-child(7){top:15%;left:60%;animation-delay:3.5s;width:3px;height:3px}
+@keyframes nodeFloat{0%,100%{transform:translateY(0);opacity:0.35}50%{transform:translateY(-20px);opacity:0.7}}
+.hero-lines{position:absolute;inset:0;opacity:0.08}
+.hero-line{position:absolute;width:1px;height:100%;background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.4),transparent)}
+.hero-line:nth-child(1){left:20%}
+.hero-line:nth-child(2){left:45%}
+.hero-line:nth-child(3){left:70%}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:800px;padding-top:clamp(40px,8vw,80px)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:99px;font-size:0.8rem;color:rgba(255,255,255,0.7);margin-bottom:28px;animation:fadeInUp 0.6s ease-out}
+.hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:dotPulse 2s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero-content h1{font-size:clamp(2.2rem,6vw,4rem);font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:20px;animation:fadeInUp 0.6s ease-out 0.1s both}
+.hero-content h1 .highlight{color:var(--accent);position:relative}
+.hero-content h1 .highlight::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:3px;background:var(--accent);border-radius:2px;opacity:0.5}
+.hero-content p{font-size:clamp(1rem,1.6vw,1.15rem);color:rgba(255,255,255,0.55);max-width:550px;margin:0 auto 32px;line-height:1.7;animation:fadeInUp 0.6s ease-out 0.2s both}
+.hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeInUp 0.6s ease-out 0.3s both}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:14px 28px;border-radius:var(--radius-sm);font-weight:600;font-size:0.95rem;transition:all 0.25s}
+.btn-primary{background:var(--accent);color:#000;box-shadow:0 4px 16px rgba(32,224,112,0.25)}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 28px rgba(32,224,112,0.35)}
+.btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.25)}
+.btn-outline:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.45)}
+
+.hero-mock{margin-top:clamp(32px,5vw,52px);animation:fadeInUp 0.6s ease-out 0.4s both}
+.hero-dashboard{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-lg);padding:20px;backdrop-filter:blur(8px);max-width:560px;margin:0 auto}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.dash-card{background:rgba(255,255,255,0.05);border-radius:var(--radius);padding:14px 16px;text-align:left}
+.dash-label{font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:4px}
+.dash-val{font-family:var(--font-mono);font-size:1.4rem;font-weight:700;color:#fff}
+.dash-trend{font-size:0.7rem;color:var(--accent);margin-top:2px}
+.dash-bar{grid-column:1/-1;display:flex;gap:6px;align-items:flex-end;height:32px}
+.dash-bar span{flex:1;background:var(--accent);border-radius:3px;opacity:0.6;animation:barPulse 1.8s ease-in-out infinite}
+.dash-bar span:nth-child(1){height:60%;animation-delay:0s}
+.dash-bar span:nth-child(2){height:85%;animation-delay:0.2s}
+.dash-bar span:nth-child(3){height:40%;animation-delay:0.4s}
+.dash-bar span:nth-child(4){height:95%;animation-delay:0.6s}
+.dash-bar span:nth-child(5){height:55%;animation-delay:0.8s}
+.dash-bar span:nth-child(6){height:70%;animation-delay:1s}
+@keyframes barPulse{0%,100%{opacity:0.4}50%{opacity:0.9}}
+
+/* ROI CALC */
+.roi-calc{background:var(--bg)}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,48px);align-items:start}
+.roi-inputs{display:flex;flex-direction:column;gap:24px}
+.roi-field label{display:flex;justify-content:space-between;font-weight:600;font-size:0.9rem;margin-bottom:8px}
+.roi-field label span{font-family:var(--font-mono);color:var(--accent)}
+.roi-field input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--border);outline:none}
+.roi-field input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(32,224,112,0.35);transition:transform 0.15s}
+.roi-field input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+
+.roi-output{background:var(--bg-dark);color:#fff;border-radius:var(--radius-lg);padding:clamp(24px,4vw,36px);display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden}
+.roi-output::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,var(--accent-glow) 0%,transparent 60%);pointer-events:none}
+.roi-stat{position:relative;z-index:1}
+.roi-num{font-family:var(--font-mono);font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;color:var(--accent);transition:transform 0.3s,opacity 0.3s}
+.roi-label{font-size:0.85rem;color:rgba(255,255,255,0.5);margin-top:2px}
+.roi-divider{height:1px;background:rgba(255,255,255,0.08)}
+.roi-cta{margin-top:6px;position:relative;z-index:1}
+.roi-cta .btn{width:100%;justify-content:center}
+@media(max-width:768px){.roi-grid{grid-template-columns:1fr}}
+
+/* BEFORE/AFTER */
+.ba-wrapper{max-width:900px;margin:0 auto}
+.ba-img-wrap{position:relative;width:100%;aspect-ratio:16/10;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg)}
+.ba-before,.ba-after{position:absolute;inset:0}
+.ba-before{background:#1a1a2e}
+.ba-after{background:#0a1a1a;clip-path:inset(0 0 0 50%)}
+.ba-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ba-green-overlay{position:absolute;inset:0;background:rgba(32,224,112,0.15);pointer-events:none;z-index:2}
+.ba-scene{position:relative;z-index:3;padding:clamp(16px,3vw,32px);height:100%;display:flex;flex-direction:column;justify-content:flex-end}
+.ba-badge{display:inline-block;padding:5px 12px;border-radius:4px;font-size:0.68rem;font-weight:700;letter-spacing:0.06em;margin-bottom:8px;width:fit-content}
+.ba-before .ba-badge{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+.ba-after .ba-badge{background:rgba(32,224,112,0.2);color:#20E070;border:1px solid rgba(32,224,112,0.3)}
+.ba-time{position:absolute;top:clamp(12px,2vw,20px);right:clamp(12px,2vw,20px);font-family:var(--font-mono);font-size:0.72rem;font-weight:600;padding:6px 12px;border-radius:99px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.ba-before .ba-time{background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.25)}
+.ba-after .ba-time{background:rgba(32,224,112,0.15);color:#20E070;border:1px solid rgba(32,224,112,0.25)}
+
+.ba-handle{position:absolute;top:0;bottom:0;left:50%;width:4px;background:#fff;z-index:10;cursor:ew-resize;transform:translateX(-50%);box-shadow:0 0 12px rgba(0,0,0,0.3)}
+.ba-handle-knob{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--text);user-select:none}
+.ba-labels{display:flex;justify-content:space-between;margin-top:16px;gap:12px}
+.before-lbl,.after-lbl{font-size:0.78rem;font-weight:600;padding:7px 14px;border-radius:var(--radius-sm)}
+.before-lbl{background:#fee2e2;color:#991b1b}
+.after-lbl{background:#d1fae5;color:#065f46}
+
+/* SERVICES PHOTOS */
+.services-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,3vw,24px);max-width:var(--max-width);margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+.service-photo-card{position:relative;border-radius:var(--radius-lg);overflow:hidden;aspect-ratio:4/5;min-height:340px}
+.service-photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 0.6s}
+.service-photo-card:hover img{transform:scale(1.05)}
+.service-photo-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(16px,3vw,28px);background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.2) 60%,transparent 100%)}
+.service-photo-overlay .tag{display:inline-block;padding:4px 10px;border-radius:4px;font-size:0.68rem;font-weight:600;letter-spacing:0.05em;background:rgba(32,224,112,0.2);color:var(--accent);margin-bottom:10px;width:fit-content;border:1px solid rgba(32,224,112,0.3)}
+.service-photo-overlay h3{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:4px}
+.service-photo-overlay p{font-size:0.82rem;color:rgba(255,255,255,0.55);line-height:1.5}
+@media(max-width:768px){.services-photos{grid-template-columns:1fr;max-width:440px}.service-photo-card{aspect-ratio:3/2;min-height:240px}}
+
+/* INDUSTRY TABS */
+.tabs-nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:clamp(24px,4vw,36px)}
+.tab-btn{padding:10px 20px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:500;color:var(--text-muted);background:var(--border-light);transition:all 0.2s}
+.tab-btn.active{background:var(--accent);color:#000;font-weight:600}
+.tab-btn:not(.active):hover{background:var(--border)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.industry-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3vw,24px)}
+.industry-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:clamp(20px,3vw,28px)}
+.ind-icon{font-size:1.8rem;margin-bottom:12px}
+.industry-card h4{font-size:1.05rem;font-weight:700;margin-bottom:8px}
+.ind-problem{font-size:0.9rem;color:var(--text-muted);line-height:1.5;margin-bottom:14px}
+.ind-metric{display:inline-block;font-family:var(--font-mono);font-size:0.8rem;font-weight:600;color:var(--accent);padding:5px 12px;background:rgba(32,224,112,0.08);border-radius:99px}
+@media(max-width:600px){.industry-grid{grid-template-columns:1fr}}
+
+/* TESTIMONIALS */
+.testimonials{background:var(--bg-dark);color:#fff}
+.testimonials .section-label{color:var(--accent)}
+.testimonials .section-header p{color:rgba(255,255,255,0.45)}
+.testimonial-track{display:flex;overflow:hidden;transition:transform 0.5s cubic-bezier(0.4,0,0.2,1)}
+.testimonial-slide{min-width:100%;display:flex;justify-content:center}
+.testimonial-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-lg);padding:clamp(24px,4vw,40px);max-width:680px;width:100%;position:relative}
+.tq{position:absolute;top:16px;left:24px;font-family:var(--font-heading);font-size:4rem;font-weight:800;color:var(--accent);opacity:0.3;line-height:1}
+.testimonial-card blockquote{font-size:1.1rem;line-height:1.7;color:rgba(255,255,255,0.75);margin-bottom:24px;position:relative;z-index:1}
+.t-author{display:flex;align-items:center;gap:12px}
+.t-avatar{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;font-family:var(--font-heading)}
+.t-name{font-weight:600;color:#fff;font-size:0.95rem}
+.t-role{font-size:0.8rem;color:rgba(255,255,255,0.4)}
+.testimonial-controls{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:28px}
+.t-arrow{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.06);color:#fff;font-size:1rem;transition:background 0.2s;display:flex;align-items:center;justify-content:center}
+.t-arrow:hover{background:rgba(255,255,255,0.14)}
+.t-dots{display:flex;gap:8px}
+.t-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2);cursor:pointer;transition:background 0.2s}
+.t-dot.active{background:var(--accent)}
+
+/* TRUST */
+.trust-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,32px)}
+.trust-stat{text-align:center}
+.ts-num{font-family:var(--font-mono);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;color:var(--accent)}
+.ts-label{font-size:0.9rem;color:var(--text-muted);margin-top:4px}
+@media(max-width:768px){.trust-stats{grid-template-columns:1fr 1fr}}
+
+/* FAQ */
+.faq-search-wrap{position:relative;max-width:560px;margin:0 auto clamp(28px,4vw,36px)}
+.faq-search-wrap .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:0.9rem}
+.faq-search-wrap input{width:100%;padding:14px 16px 14px 40px;font-size:0.95rem;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--bg-card);transition:border-color 0.2s}
+.faq-search-wrap input:focus{outline:none;border-color:var(--accent)}
+.faq-list{max-width:760px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{width:100%;display:flex;justify-content:space-between;align-items:center;padding:18px 0;font-size:1rem;font-weight:600;text-align:left;color:var(--text);transition:color 0.2s}
+.faq-q:hover{color:var(--accent)}
+.faq-icon{font-size:1.2rem;color:var(--text-muted);transition:transform 0.3s}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.35s ease;font-size:0.92rem;color:var(--text-muted);line-height:1.6}
+.faq-item.open .faq-a{max-height:300px;padding-bottom:18px}
+.faq-hidden{display:none}
+.faq-cta{text-align:center;margin-top:clamp(28px,4vw,40px)}
+.faq-cta p{color:var(--text-muted);margin-bottom:12px}
+
+/* CTA BAND */
+.cta-band{background:var(--bg-dark);text-align:center}
+.cta-band h2{color:#fff;margin-bottom:10px}
+.cta-band p{color:rgba(255,255,255,0.5);margin-bottom:28px}
+.cta-band form{display:flex;gap:10px;max-width:520px;margin:0 auto 16px;flex-wrap:wrap;justify-content:center}
+.cta-band input{flex:1;min-width:200px;padding:14px 18px;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;font-size:0.95rem}
+.cta-band input::placeholder{color:rgba(255,255,255,0.35)}
+.cta-band input:focus{outline:none;border-color:var(--accent)}
+.microcopy{font-size:0.78rem;color:rgba(255,255,255,0.3)}
+
+/* FOOTER */
+footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);padding:clamp(40px,6vw,64px) 0 28px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:clamp(24px,4vw,40px);margin-bottom:36px}
+.footer-brand p{color:rgba(255,255,255,0.4);font-size:0.88rem;line-height:1.6;margin-top:14px;max-width:320px}
+.footer-logo-img{height:32px;width:auto}
+.footer-col h4{color:#fff;font-size:0.85rem;font-weight:600;margin-bottom:14px;text-transform:uppercase;letter-spacing:0.05em}
+.footer-link-btn{display:block;color:rgba(255,255,255,0.45);font-size:0.88rem;padding:3px 0;transition:color 0.2s;text-align:left}
+.footer-link-btn:hover{color:#fff}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);font-size:0.8rem;flex-wrap:wrap;gap:8px}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr}}
+
+/* CHATBOT */
+.chatbot{position:fixed;bottom:20px;right:20px;z-index:200}
+.chatbot-toggle{width:56px;height:56px;border-radius:50%;background:var(--accent);color:#000;font-size:1.5rem;box-shadow:0 4px 24px rgba(32,224,112,0.4);transition:transform 0.2s,box-shadow 0.2s}
+.chatbot-toggle:hover{transform:scale(1.06);box-shadow:0 6px 32px rgba(32,224,112,0.5)}
+.chatbot-window{display:none;position:absolute;bottom:72px;right:0;width:360px;max-width:calc(100vw - 40px);background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,0.5)}
+.chatbot.open .chatbot-window{display:block}
+.chatbot-header{background:rgba(255,255,255,0.05);padding:14px 18px;font-size:0.85rem;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.cb-status{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:dotPulse 2s ease-in-out infinite}
+.chatbot-body{padding:16px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;background:#0a0a0a}
+.cb-msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:0.85rem;line-height:1.5;animation:fadeInUp 0.3s ease-out}
+.cb-msg.bot{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8);align-self:flex-start;border-bottom-left-radius:4px}
+.cb-msg.user{background:var(--accent);color:#000;align-self:flex-end;border-bottom-right-radius:4px;font-weight:500}
+.chatbot-suggestions{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.cb-sugg{font-size:0.75rem;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.65);transition:background 0.2s,color 0.2s}
+.cb-sugg:hover{background:rgba(255,255,255,0.14);color:#fff}
+</style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <a href="#hero" class="nav-logo">Nova<span>Link</span></a>
-    <ul class="nav-links">
-      <li><a href="#core">Especialidad</a></li>
-      <li><a href="#why">Nosotros</a></li>
-      <li><a href="#services">Servicios</a></li>
-      <li><a href="#contact" class="nav-cta">Cotizar</a></li>
+<!-- NAV -->
+<nav id="nav">
+  <div class="container nav-inner">
+    <a href="#inicio" class="nav-logo">
+      <img src="references/nova-link-logotipo.png" alt="NovaLink">
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#demos" onclick="closeNav()">Demos</a></li>
+      <li><a href="#industrias" onclick="closeNav()">Industrias</a></li>
+      <li><a href="#testimonios" onclick="closeNav()">Casos de Éxito</a></li>
+      <li><a href="#faq" onclick="closeNav()">FAQ</a></li>
+      <li><a href="javascript:void(0)" class="nav-cta" onclick="toggleChatbot();closeNav()">Prueba el Demo</a></li>
     </ul>
-  </nav>
+    <button class="hamburger" id="hamburger" aria-label="Menú" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
 
-  <!-- HERO -->
-  <section id="hero">
-    <div class="hero-inner">
-      <div class="hero-badge">Hogares · Empresas · Ciudades</div>
-      <h1>Hacemos que tus espacios y negocios trabajen <span class="accent">solos.</span></h1>
-      <p>Desde una casa que se controla con el celular hasta cámaras de seguridad conectadas o semáforos que se adaptan al tráfico en tiempo real — NovaLink lo instala, lo conecta y lo mantiene funcionando.</p>
-      <div class="hero-actions">
-        <a href="#contact" class="btn-primary">Quiero una solución</a>
-        <a href="#core" class="btn-secondary">Ver ejemplos</a>
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-bg">
+    <div class="hero-grain"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-nodes">
+      <div class="hero-node"></div><div class="hero-node"></div><div class="hero-node"></div>
+      <div class="hero-node"></div><div class="hero-node"></div><div class="hero-node"></div>
+      <div class="hero-node"></div>
+    </div>
+    <div class="hero-lines">
+      <div class="hero-line"></div><div class="hero-line"></div><div class="hero-line"></div>
+    </div>
+  </div>
+  <div class="container hero-content">
+    <div class="hero-badge"><span class="dot"></span> Demo disponible sin registro</div>
+    <h1>Automatiza tu empresa en <span class="highlight">minutos</span></h1>
+    <p>Descubre cuánto tiempo y dinero puedes ahorrar con automatización inteligente de procesos, IoT y gestión de datos.</p>
+    <div class="hero-ctas">
+      <a href="javascript:void(0)" class="btn btn-primary" onclick="toggleChatbot()">Probar el Demo Gratis →</a>
+      <a href="#como-funciona" class="btn btn-outline">Ver cómo funciona</a>
+    </div>
+    <div class="hero-mock">
+      <div class="hero-dashboard">
+        <div class="dash-grid">
+          <div class="dash-card"><div class="dash-label">Procesos Activos</div><div class="dash-val" id="liveProcesses">847</div><div class="dash-trend">↑ 12% esta semana</div></div>
+          <div class="dash-card"><div class="dash-label">Horas Ahorradas</div><div class="dash-val" id="liveHours">12.4k</div><div class="dash-trend">↑ 8% vs mes anterior</div></div>
+          <div class="dash-card"><div class="dash-label">Eficiencia</div><div class="dash-val">94.7%</div><div class="dash-trend">↑ 2.3 pts</div></div>
+          <div class="dash-bar"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
       </div>
+    </div>
+  </div>
+</section>
 
-      <!-- Solution examples flow -->
-      <div class="flow-diagram">
-        <div class="flow-node">
-          <div class="flow-svg-icon">
-            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 13L16 4l12 9v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/>
-              <path d="M11 30V18h10v12"/>
-            </svg>
+<!-- ROI CALCULATOR -->
+<section class="section roi-calc" id="demos">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Demo Interactiva</span>
+      <h2>Simulador de Ahorro</h2>
+      <p>Ajusta los valores y descubre cuánto podrías ahorrar automatizando tus procesos</p>
+    </div>
+    <div class="roi-grid">
+      <div class="roi-inputs">
+        <div class="roi-field">
+          <label>Facturas procesadas al mes <span id="valFacturas">120</span></label>
+          <input type="range" min="10" max="1000" value="120" step="5" id="sliderFacturas" oninput="updateROI()">
+        </div>
+        <div class="roi-field">
+          <label>Empleados en área administrativa <span id="valEmpleados">5</span></label>
+          <input type="range" min="1" max="50" value="5" step="1" id="sliderEmpleados" oninput="updateROI()">
+        </div>
+        <div class="roi-field">
+          <label>Horas semanales en tareas manuales <span id="valHoras">30</span></label>
+          <input type="range" min="5" max="80" value="30" step="1" id="sliderHoras" oninput="updateROI()">
+        </div>
+      </div>
+      <div class="roi-output" id="roiOutput">
+        <div class="roi-stat">
+          <div class="roi-num" id="roiHoras">22.5h</div>
+          <div class="roi-label">Horas ahorradas al mes</div>
+        </div>
+        <div class="roi-divider"></div>
+        <div class="roi-stat">
+          <div class="roi-num" id="roiDinero">$13,500</div>
+          <div class="roi-label">Ahorro estimado al año (USD)</div>
+        </div>
+        <div class="roi-divider"></div>
+        <div class="roi-stat">
+          <div class="roi-num" id="roiEficiencia">75%</div>
+          <div class="roi-label">Porcentaje de eficiencia ganada</div>
+        </div>
+        <div class="roi-cta">
+          <button class="btn btn-primary" onclick="toggleChatbot()">Quiero mi reporte personalizado</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEFORE / AFTER -->
+<section class="section" id="como-funciona">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Antes vs Después</span>
+      <h2>La diferencia de automatizar</h2>
+      <p>Desliza el control para ver el impacto real en tus operaciones diarias</p>
+    </div>
+    <div class="ba-wrapper" id="baWrapper">
+      <div class="ba-img-wrap">
+        <div class="ba-before" id="baBefore">
+          <img class="ba-bg-img" src="assets/images/excel.jpg" alt="Proceso manual con hojas de cálculo" onerror="this.style.display='none'">
+          <div class="ba-scene">
+            <div class="ba-badge">ANTES — Manual</div>
+            <div style="color:rgba(255,255,255,0.6);font-size:0.85rem;text-shadow:0 1px 4px rgba(0,0,0,0.6)">Hojas de cálculo, entrada manual, errores frecuentes</div>
+            <div style="display:flex;gap:12px;margin-top:12px">
+              <span style="color:#ef4444;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)">✕ Errores de tipeo</span>
+              <span style="color:#ef4444;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)">✕ Datos duplicados</span>
+            </div>
+            <div class="ba-time">4 horas</div>
           </div>
-          <div class="label">Casa Inteligente</div>
-          <div class="sublabel">Luces, clima y puertas desde tu celular</div>
         </div>
-        <div class="flow-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/>
-          </svg>
-        </div>
-        <div class="flow-node">
-          <div class="flow-svg-icon">
-            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="16" cy="16" r="12"/>
-              <circle cx="16" cy="10" r="3"/>
-              <circle cx="16" cy="22" r="3"/>
-              <line x1="16" y1="13" x2="16" y2="19"/>
-            </svg>
+        <div class="ba-after" id="baAfter">
+          <img class="ba-bg-img" src="assets/images/tablet_dashboard.webp" alt="Dashboard automatizado en tablet" onerror="this.style.display='none'">
+          <div class="ba-green-overlay"></div>
+          <div class="ba-scene">
+            <div class="ba-badge">DESPUÉS — Automatizado</div>
+            <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;text-shadow:0 1px 4px rgba(0,0,0,0.6)">Dashboard inteligente, sincronización en tiempo real</div>
+            <div style="display:flex;gap:12px;margin-top:12px">
+              <span style="color:#20E070;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)">✓ Datos precisos</span>
+              <span style="color:#20E070;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)">✓ Reportes automáticos</span>
+            </div>
+            <div class="ba-time">8 minutos</div>
           </div>
-          <div class="label">Seguridad 24/7</div>
-          <div class="sublabel">Cámaras y alarmas conectadas</div>
         </div>
-        <div class="flow-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/>
-          </svg>
+        <div class="ba-handle" id="baHandle">
+          <div class="ba-handle-knob">⟷</div>
         </div>
-        <div class="flow-node">
-          <div class="flow-svg-icon">
-            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="5" width="26" height="18" rx="2"/>
-              <line x1="3" y1="11" x2="29" y2="11"/>
-              <rect x="8" y="15" width="6" height="4" rx="1"/>
-              <rect x="18" y="15" width="6" height="4" rx="1"/>
-            </svg>
+      </div>
+      <div class="ba-labels">
+        <span class="before-lbl">Proceso Manual: 4 horas</span>
+        <span class="after-lbl">Proceso Automatizado: 8 min</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES PHOTOS -->
+<section class="section" style="background:var(--bg-dark);">
+  <div class="section-header" style="margin-bottom:clamp(28px,4vw,40px);">
+    <span class="section-label" style="color:var(--accent);">Áreas de Especialización</span>
+    <h2 style="color:#fff;">Tecnología que impulsa tu negocio</h2>
+    <p style="color:rgba(255,255,255,0.5);">Soluciones integradas de hardware, seguridad y desarrollo cloud</p>
+  </div>
+  <div class="services-photos">
+    <div class="service-photo-card">
+      <img src="assets/images/IOT.jpg" alt="IoT y Hardware" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#0a2a1a,#0d2818)'">
+      <div class="service-photo-overlay">
+        <span class="tag">IoT y Hardware</span>
+        <h3>Internet de las Cosas</h3>
+        <p>Sensores inteligentes, monitoreo en tiempo real y automatización de dispositivos físicos</p>
+      </div>
+    </div>
+    <div class="service-photo-card">
+      <img src="assets/images/security.jpg" alt="Ciberseguridad" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#1a1a2e,#16213e)'">
+      <div class="service-photo-overlay">
+        <span class="tag">Ciberseguridad</span>
+        <h3>Seguridad Empresarial</h3>
+        <p>Protección de datos, detección de amenazas y cumplimiento normativo automatizado</p>
+      </div>
+    </div>
+    <div class="service-photo-card">
+      <img src="assets/images/softwaredev&amp;cloud.jpg" alt="Software y Cloud" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#0a1628,#0d1a2a)'">
+      <div class="service-photo-overlay">
+        <span class="tag">Software y Cloud</span>
+        <h3>Desarrollo Cloud-Native</h3>
+        <p>Aplicaciones escalables, integración de APIs y migración a la nube sin fricción</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INDUSTRY TABS -->
+<section class="section" id="industrias">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Casos de Uso</span>
+      <h2>Soluciones por Industria</h2>
+      <p>Cada sector tiene desafíos únicos. Así los resolvemos con automatización inteligente.</p>
+    </div>
+    <div class="tabs-nav" id="tabsNav">
+      <button class="tab-btn active" data-tab="retail">🏪 Retail y E-commerce</button>
+      <button class="tab-btn" data-tab="salud">🏥 Salud</button>
+      <button class="tab-btn" data-tab="logistica">🚚 Logística</button>
+      <button class="tab-btn" data-tab="finanzas">🏦 Finanzas</button>
+      <button class="tab-btn" data-tab="manufactura">🏭 Manufactura</button>
+    </div>
+    <div class="tab-panels">
+      <div class="tab-panel active" id="panel-retail">
+        <div class="industry-grid">
+          <div class="industry-card">
+            <div class="ind-icon">📦</div>
+            <h4>Sincronización de Inventario</h4>
+            <p class="ind-problem">El inventario entre tienda física y online se desfasa constantemente, causando ventas perdidas y sobrestock.</p>
+            <span class="ind-metric">↓ 85% errores de inventario</span>
           </div>
-          <div class="label">Panel de Control</div>
-          <div class="sublabel">Todo visible desde una sola pantalla</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CORE -->
-  <section id="core">
-    <div class="section-header reveal">
-      <span class="section-tag">Nuestra Especialidad</span>
-      <h2 class="section-title">El núcleo de lo que hacemos</h2>
-      <p class="section-sub">Cubrimos el ciclo completo: desde el chip hasta el dashboard, pasando por la capa de seguridad.</p>
-    </div>
-    <div class="core-grid">
-      <div class="core-card reveal">
-        <div class="core-card-bg" style="background-image:url('assets/images/IOT.jpg')"></div>
-        <div class="core-card-overlay"></div>
-        <div class="core-card-content">
-          <div class="core-icon">
-            <img src="assets/icons/hardware-iot.svg" alt="Hardware e IoT" />
+          <div class="industry-card">
+            <div class="ind-icon">💬</div>
+            <h4>Atención al Cliente 24/7</h4>
+            <p class="ind-problem">Consultas repetitivas sobre estados de pedido consumen horas del equipo de soporte cada día.</p>
+            <span class="ind-metric">↓ 60% tickets de soporte</span>
           </div>
-          <h3>Dispositivos y Conectividad</h3>
-          <p>Instalamos y conectamos sensores, cámaras y equipos electrónicos para que tus espacios o procesos funcionen de forma automática, sin que tengas que hacer nada manualmente.</p>
         </div>
       </div>
-      <div class="core-card reveal">
-        <div class="core-card-bg" style="background-image:url('assets/images/softwaredev%26cloud.jpg')"></div>
-        <div class="core-card-overlay"></div>
-        <div class="core-card-content">
-          <div class="core-icon">
-            <img src="assets/icons/software-cloud.svg" alt="Software y Cloud" />
+      <div class="tab-panel" id="panel-salud">
+        <div class="industry-grid">
+          <div class="industry-card">
+            <div class="ind-icon">📋</div>
+            <h4>Digitalización de Historias Clínicas</h4>
+            <p class="ind-problem">Expedientes en papel difíciles de buscar y propensos a pérdida. Actualización manual que consume horas del personal.</p>
+            <span class="ind-metric">↓ 70% tiempo de búsqueda</span>
           </div>
-          <h3>Software &amp; Aplicaciones</h3>
-          <p>Desarrollo de aplicaciones a medida y paneles de control en la nube. Consulta el estado de tus sistemas desde el celular o computadora, en cualquier momento y desde cualquier lugar.</p>
-        </div>
-      </div>
-      <div class="core-card reveal">
-        <div class="core-card-bg" style="background-image:url('assets/images/security.jpg')"></div>
-        <div class="core-card-overlay"></div>
-        <div class="core-card-content">
-          <div class="core-icon">
-            <img src="assets/icons/security.svg" alt="Seguridad Integral" />
+          <div class="industry-card">
+            <div class="ind-icon">📅</div>
+            <h4>Recordatorios Automáticos</h4>
+            <p class="ind-problem">Citas perdidas por falta de confirmación. El personal dedica horas a llamar pacientes uno por uno.</p>
+            <span class="ind-metric">↓ 45% citas perdidas</span>
           </div>
-          <h3>Seguridad Integral</h3>
-          <p>Videovigilancia profesional, control de acceso, alarmas y seguridad residencial e industrial inteligente. Protegemos tu patrimonio y garantizamos que tu información viaje segura.</p>
+        </div>
+      </div>
+      <div class="tab-panel" id="panel-logistica">
+        <div class="industry-grid">
+          <div class="industry-card">
+            <div class="ind-icon">🚛</div>
+            <h4>Seguimiento de Flota en Tiempo Real</h4>
+            <p class="ind-problem">Actualizaciones manuales de estado de entregas. Clientes llamando para saber dónde está su pedido.</p>
+            <span class="ind-metric">↓ 90% llamadas de estado</span>
+          </div>
+          <div class="industry-card">
+            <div class="ind-icon">📊</div>
+            <h4>Optimización de Rutas</h4>
+            <p class="ind-problem">Rutas planificadas sin datos de tráfico en tiempo real, generando demoras y costos extra de combustible.</p>
+            <span class="ind-metric">↓ 25% costo combustible</span>
+          </div>
+        </div>
+      </div>
+      <div class="tab-panel" id="panel-finanzas">
+        <div class="industry-grid">
+          <div class="industry-card">
+            <div class="ind-icon">🧾</div>
+            <h4>Procesamiento Automático de Facturas</h4>
+            <p class="ind-problem">Extracción manual de datos de facturas, validación lenta y riesgo de errores en registros contables.</p>
+            <span class="ind-metric">↓ 95% tiempo de procesamiento</span>
+          </div>
+          <div class="industry-card">
+            <div class="ind-icon">🔍</div>
+            <h4>Detección de Anomalías</h4>
+            <p class="ind-problem">Revisión manual de transacciones buscando irregularidades. Proceso mensual que toma días completos.</p>
+            <span class="ind-metric">↓ 80% tiempo de auditoría</span>
+          </div>
+        </div>
+      </div>
+      <div class="tab-panel" id="panel-manufactura">
+        <div class="industry-grid">
+          <div class="industry-card">
+            <div class="ind-icon">🏭</div>
+            <h4>Mantenimiento Predictivo IoT</h4>
+            <p class="ind-problem">Paradas de máquina no planificadas por falta de monitoreo en tiempo real. Mantenimiento reactivo costoso.</p>
+            <span class="ind-metric">↓ 60% paradas no planificadas</span>
+          </div>
+          <div class="industry-card">
+            <div class="ind-icon">📈</div>
+            <h4>Control de Calidad Automatizado</h4>
+            <p class="ind-problem">Inspección visual manual de productos, lenta y con variabilidad entre turnos y operadores.</p>
+            <span class="ind-metric">↑ 40% velocidad de inspección</span>
+          </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- WHY -->
-  <section id="why">
-    <div class="section-header reveal" style="text-align:center;">
-      <span class="section-tag">¿Por qué NovaLink?</span>
-      <h2 class="section-title">No somos una agencia de software más.</h2>
+<!-- TESTIMONIALS -->
+<section class="section testimonials" id="testimonios">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Casos de Éxito</span>
+      <h2>Lo que dicen nuestros clientes</h2>
+      <p>Empresas que ya transformaron sus operaciones con automatización</p>
     </div>
-    <blockquote class="reveal">
-      "A diferencia de las agencias de software tradicionales, en <strong>NovaLink</strong> entendemos el hardware desde su base electrónica. No solo creamos la app; construimos el dispositivo, lo conectamos de forma segura y garantizamos que tus datos lleguen íntegros a la nube."
-    </blockquote>
-    <div class="why-stats reveal">
-      <div class="stat">
-        <div class="stat-num">100%</div>
-        <div class="stat-label">Ciclo cubierto</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">E2E</div>
-        <div class="stat-label">Cifrado extremo a extremo</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">24/7</div>
-        <div class="stat-label">Soporte técnico</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SERVICES -->
-  <section id="services">
-    <div class="section-header reveal">
-      <span class="section-tag">Servicios</span>
-      <h2 class="section-title">Todo lo que necesitas, bajo un mismo techo.</h2>
-      <p class="section-sub">Desde la adquisición del equipo hasta el mantenimiento continuo del sistema.</p>
-    </div>
-    <div class="services-grid">
-      <div class="service-card reveal">
-        <div class="service-num">01</div>
-        <div>
-          <h3>Reventa & Configuración</h3>
-          <p>Equipos electrónicos de alta gama seleccionados, configurados y listos para operar desde el primer día. Sin fricciones de integración.</p>
+    <div class="testimonial-track" id="testimonialTrack">
+      <div class="testimonial-slide">
+        <div class="testimonial-card">
+          <div class="tq">"</div>
+          <blockquote>Implementamos la automatización de facturación y pasamos de 3 días de proceso manual a 20 minutos. El ROI fue inmediato.</blockquote>
+          <div class="t-author">
+            <div class="t-avatar">MC</div>
+            <div class="t-info">
+              <div class="t-name">María Castillo</div>
+              <div class="t-role">CFO — LogistiCorp</div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="service-card reveal">
-        <div class="service-num">02</div>
-        <div>
-          <h3>Implementación IoT</h3>
-          <p>Llevamos tu idea desde el prototipo hasta la producción industrial. Validación, escalado y despliegue completo de infraestructura IoT.</p>
+      <div class="testimonial-slide">
+        <div class="testimonial-card">
+          <div class="tq">"</div>
+          <blockquote>El dashboard en tiempo real nos permitió reducir errores de inventario en un 85%. Ahora tomamos decisiones con datos, no con intuición.</blockquote>
+          <div class="t-author">
+            <div class="t-avatar">RL</div>
+            <div class="t-info">
+              <div class="t-name">Roberto Linares</div>
+              <div class="t-role">Director de Operaciones — TecnoRetail</div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="service-card reveal">
-        <div class="service-num">03</div>
-        <div>
-          <h3>Mantenimiento Técnico</h3>
-          <p>Soporte preventivo y correctivo para sistemas electrónicos y de software. Monitoreo proactivo para minimizar tiempos de inactividad.</p>
+      <div class="testimonial-slide">
+        <div class="testimonial-card">
+          <div class="tq">"</div>
+          <blockquote>La integración de IoT con nuestros sensores de planta redujo las paradas no planificadas en un 60% en el primer trimestre.</blockquote>
+          <div class="t-author">
+            <div class="t-avatar">AG</div>
+            <div class="t-info">
+              <div class="t-name">Alejandra Gómez</div>
+              <div class="t-role">VP Ingeniería — IndusMart</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="contact">
-    <div class="contact-wrapper">
-      <div class="contact-info reveal">
-        <span class="section-tag">Contacto</span>
-        <h2 class="section-title">Cuéntanos tu proyecto.</h2>
-        <p>Analizamos tu caso sin costo y te proponemos la arquitectura más eficiente para tus objetivos.</p>
-        <div class="contact-detail"><span class="dot"></span> Respuesta en menos de 24 horas</div>
-        <div class="contact-detail"><span class="dot"></span> Consultoría técnica inicial gratuita</div>
-        <div class="contact-detail"><span class="dot"></span> Presupuesto detallado sin compromiso</div>
-      </div>
-      <form id="contact-form" class="reveal" onsubmit="handleSubmit(event)">
-        <div class="form-row">
-          <input id="f-name" type="text" placeholder="Nombre completo" required />
-          <input id="f-company" type="text" placeholder="Empresa" />
-        </div>
-        <input id="f-email" type="email" placeholder="Correo electrónico" required />
-        <select id="f-type" required>
-          <option value="" disabled selected>Tipo de Proyecto</option>
-          <option value="iot">Dispositivos / IoT / Hardware</option>
-          <option value="software">Software / Aplicaciones / Cloud</option>
-          <option value="security">Seguridad Integral / Videovigilancia</option>
-          <option value="other">Otro</option>
-        </select>
-        <textarea id="f-message" placeholder="Cuéntanos sobre tu proyecto…"></textarea>
-        <div id="form-feedback" style="display:none; font-size:0.9rem; padding:0.6rem 0;"></div>
-        <button type="submit" class="btn-primary">Enviar Solicitud →</button>
-      </form>
+    <div class="testimonial-controls">
+      <button class="t-arrow" onclick="moveTestimonial(-1)" aria-label="Anterior">←</button>
+      <div class="t-dots" id="tDots"></div>
+      <button class="t-arrow" onclick="moveTestimonial(1)" aria-label="Siguiente">→</button>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-logo">Nova<span>Link</span></div>
-    <p>© 2026 NovaLink. Todos los derechos reservados.</p>
-    <ul class="footer-links">
-      <li><a href="#core">Especialidad</a></li>
-      <li><a href="#services">Servicios</a></li>
-      <li><a href="#contact">Contacto</a></li>
-    </ul>
-  </footer>
+<!-- TRUST -->
+<section class="section" id="confianza">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Confianza</span>
+      <h2>Respaldado por resultados</h2>
+      <p>Métricas reales de empresas que ya confían en nuestra plataforma</p>
+    </div>
+    <div class="trust-stats">
+      <div class="trust-stat">
+        <div class="ts-num" data-target="150" data-suffix="+">0</div>
+        <div class="ts-label">Empresas activas</div>
+      </div>
+      <div class="trust-stat">
+        <div class="ts-num" data-target="98" data-suffix="%">0</div>
+        <div class="ts-label">Tasa de retención</div>
+      </div>
+      <div class="trust-stat">
+        <div class="ts-num" data-target="2.5" data-suffix="M+">0</div>
+        <div class="ts-label">Horas ahorradas</div>
+      </div>
+      <div class="trust-stat">
+        <div class="ts-num" data-target="45" data-suffix="s">0</div>
+        <div class="ts-label">Tiempo promedio de setup</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <script>
-    // Scroll reveal
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(
-      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
-      { threshold: 0.12 }
-    );
-    reveals.forEach(el => observer.observe(el));
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Preguntas Frecuentes</span>
+      <h2>Resolvemos tus dudas</h2>
+      <p>Las preguntas que más nos hacen sobre automatización empresarial</p>
+    </div>
+    <div class="faq-search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Buscar en preguntas frecuentes..." id="faqSearch" oninput="filterFAQ()">
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">¿Cuánto tiempo toma implementar la automatización? <span class="faq-icon">+</span></button>
+        <div class="faq-a">El tiempo de implementación varía según la complejidad del proyecto. Una automatización básica de procesos administrativos puede estar lista en 2-4 semanas. Proyectos más complejos con integración IoT o migración cloud pueden tomar de 6 a 12 semanas. En todos los casos, entregamos valor incremental desde la primera semana.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">¿Necesito conocimientos técnicos para usar NovaLink? <span class="faq-icon">+</span></button>
+        <div class="faq-a">No. Nuestra plataforma está diseñada para ser utilizada por cualquier persona del equipo. La configuración inicial la hacemos nosotros, y luego te entregamos dashboards y herramientas visuales intuitivas. Si puedes usar una hoja de cálculo, puedes usar NovaLink.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">¿Qué tipo de empresas pueden beneficiarse? <span class="faq-icon">+</span></button>
+        <div class="faq-a">Empresas de cualquier tamaño y sector. Hemos trabajado con retail, logística, salud, finanzas, manufactura y más. Si tu empresa tiene procesos repetitivos que consumen horas de tu equipo — facturación, inventario, atención al cliente, reportes — la automatización genera un ROI medible en semanas.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">¿Mis datos están seguros? <span class="faq-icon">+</span></button>
+        <div class="faq-a">Absolutamente. Usamos encriptación AES-256, autenticación de dos factores, y cumplimos con GDPR, HIPAA y SOC 2. Los datos se almacenan en servidores certificados con backups automáticos. La seguridad es nuestra prioridad #1.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">¿Hay un periodo de prueba gratuito? <span class="faq-icon">+</span></button>
+        <div class="faq-a">Sí. Ofrecemos un demo personalizado sin costo, donde automatizamos un proceso real de tu empresa para que veas el impacto antes de comprometerte. No requiere tarjeta de crédito ni instalación.</div>
+      </div>
+    </div>
+    <div class="faq-cta">
+      <p>¿No encontraste lo que buscabas? Conversemos.</p>
+      <button class="btn btn-primary" onclick="toggleChatbot()">Hablar con un experto →</button>
+    </div>
+  </div>
+</section>
 
-    // Staggered cards
-    document.querySelectorAll('.core-grid .core-card, .services-grid .service-card').forEach((el, i) => {
-      el.style.transitionDelay = `${i * 0.1}s`;
-    });
+<!-- CTA BAND -->
+<section class="section cta-band" id="cta">
+  <div class="container">
+    <h2>¿Listo para automatizar tu empresa?</h2>
+    <p>Déjanos tu email y te enviamos un reporte de ahorro personalizado sin costo.</p>
+    <form id="ctaForm" onsubmit="handleCTASubmit(event)">
+      <input type="email" placeholder="tu@empresa.com" required id="ctaEmail">
+      <button type="submit" class="btn btn-primary">Quiero mi reporte gratis</button>
+      <div class="microcopy">🔒 Sin spam. Solo valor real. Nos odian los que aman las hojas de cálculo manuales.</div>
+    </form>
+  </div>
+</section>
 
-    // Form submit — integración con Odoo via config.js
-    async function handleSubmit(e) {
-      e.preventDefault();
-      const btn     = e.target.querySelector('button[type="submit"]');
-      const feedback = document.getElementById('form-feedback');
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="references/nova-link-logotipo.png" alt="NovaLink" class="footer-logo-img">
+        <p>Automatización inteligente para empresas que quieren dejar atrás los procesos manuales. IoT, datos y cloud trabajando para ti.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <button class="footer-link-btn" onclick="scrollToSection('demos')">Demo</button>
+        <button class="footer-link-btn" onclick="scrollToSection('industrias')">Industrias</button>
+        <button class="footer-link-btn" onclick="scrollToSection('faq')">FAQ</button>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <button class="footer-link-btn" onclick="scrollToSection('inicio')">Sobre Nosotros</button>
+        <button class="footer-link-btn" onclick="scrollToSection('inicio')">Blog</button>
+        <button class="footer-link-btn" onclick="scrollToSection('inicio')">Contacto</button>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <button class="footer-link-btn" onclick="scrollToSection('inicio')">Privacidad</button>
+        <button class="footer-link-btn" onclick="scrollToSection('inicio')">Términos</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 NovaLink. Todos los derechos reservados.</span>
+      <span style="color:var(--accent);font-family:var(--font-mono);font-size:0.75rem">v2.1 — Black y Green</span>
+    </div>
+  </div>
+</footer>
 
-      btn.disabled    = true;
-      btn.textContent = 'Enviando…';
+<!-- CHATBOT -->
+<div class="chatbot" id="chatbot">
+  <button class="chatbot-toggle" onclick="toggleChatbot()" aria-label="Abrir chat">💬</button>
+  <div class="chatbot-window">
+    <div class="chatbot-header">
+      <span class="cb-status"></span>
+      NovaLink Assistant — En línea
+    </div>
+    <div class="chatbot-body" id="chatBody">
+      <div class="cb-msg bot">👋 ¡Hola! Soy el agente virtual de NovaLink. Cuéntame sobre tu empresa: ¿en qué sector operas y qué tipo de operaciones te gustaría optimizar? Estoy aquí para mostrarte cómo la automatización puede transformar tu negocio.</div>
+    </div>
+    <div class="chatbot-suggestions" id="chatSuggestions">
+      <button class="cb-sugg" onclick="sendChatMessage('Tengo un negocio de retail/e-commerce')">🏪 Retail / E-commerce</button>
+      <button class="cb-sugg" onclick="sendChatMessage('Estoy en el sector salud')">🏥 Sector Salud</button>
+      <button class="cb-sugg" onclick="sendChatMessage('Mi empresa es de logística y transporte')">🚚 Logística</button>
+      <button class="cb-sugg" onclick="sendChatMessage('Trabajo en finanzas o contabilidad')">🏦 Finanzas</button>
+      <button class="cb-sugg" onclick="sendChatMessage('Tengo una empresa de manufactura')">🏭 Manufactura</button>
+    </div>
+  </div>
+</div>
 
-      const formData = {
-        name:        document.getElementById('f-name').value.trim(),
-        company:     document.getElementById('f-company').value.trim(),
-        email:       document.getElementById('f-email').value.trim(),
-        projectType: document.getElementById('f-type').value,
-        message:     document.getElementById('f-message').value.trim(),
-      };
+<script>
+/* NAV */
+function toggleNav(){document.getElementById('navLinks').classList.toggle('open');document.getElementById('hamburger').classList.toggle('open')}
+function closeNav(){document.getElementById('navLinks').classList.remove('open');document.getElementById('hamburger').classList.remove('open')}
+window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>20)})
 
-      const result = await submitToOdoo(formData);
+/* ROI CALC */
+function updateROI(){
+  var f=parseInt(document.getElementById('sliderFacturas').value);
+  var e=parseInt(document.getElementById('sliderEmpleados').value);
+  var h=parseInt(document.getElementById('sliderHoras').value);
+  document.getElementById('valFacturas').textContent=f;
+  document.getElementById('valEmpleados').textContent=e;
+  document.getElementById('valHoras').textContent=h;
+  var horasAhorradas=Math.round(h*0.75);
+  var ahorroAnual=Math.round(horasAhorradas*e*25*12);
+  document.getElementById('roiHoras').textContent=horasAhorradas+'h';
+  document.getElementById('roiDinero').textContent='$'+ahorroAnual.toLocaleString();
+  document.getElementById('roiEficiencia').textContent=Math.round(75+(f/200)*10)+'%';
+}
 
-      feedback.style.display = 'block';
-      if (result.ok) {
-        feedback.style.color   = '#20E070';
-        feedback.textContent   = result.message;
-        btn.textContent        = '✓ Solicitud enviada';
-        btn.style.background   = '#18b35a';
-        const redirect = NOVALINK_CONFIG.form.redirectAfterSubmit;
-        if (redirect) setTimeout(() => { window.location.href = redirect; }, 1800);
-      } else {
-        feedback.style.color = '#ff5c5c';
-        feedback.textContent = result.message;
-        btn.disabled         = false;
-        btn.textContent      = 'Enviar Solicitud →';
-      }
+/* BA SLIDER — clips both sides so green text never overlaps */
+(function(){
+  var wrap=document.getElementById('baWrapper');
+  if(!wrap)return;
+  var after=document.getElementById('baAfter');
+  var before=document.getElementById('baBefore');
+  var handle=document.getElementById('baHandle');
+  var dragging=false;
+  function setPos(pct){
+    pct=Math.max(0,Math.min(100,pct));
+    after.style.clipPath='inset(0 0 0 '+pct+'%)';
+    before.style.clipPath='inset(0 '+(100-pct)+'% 0 0)';
+    handle.style.left=pct+'%';
+  }
+  handle.addEventListener('mousedown',function(e){dragging=true;e.preventDefault()});
+  handle.addEventListener('touchstart',function(e){dragging=true;e.preventDefault()});
+  document.addEventListener('mousemove',function(e){
+    if(!dragging)return;
+    var rect=wrap.querySelector('.ba-img-wrap').getBoundingClientRect();
+    setPos(((e.clientX-rect.left)/rect.width)*100);
+  });
+  document.addEventListener('touchmove',function(e){
+    if(!dragging)return;
+    var rect=wrap.querySelector('.ba-img-wrap').getBoundingClientRect();
+    setPos(((e.touches[0].clientX-rect.left)/rect.width)*100);
+  });
+  document.addEventListener('mouseup',function(){dragging=false});
+  document.addEventListener('touchend',function(){dragging=false});
+  setPos(50);
+})();
+
+/* INDUSTRY TABS */
+document.getElementById('tabsNav').addEventListener('click',function(e){
+  if(!e.target.classList.contains('tab-btn'))return;
+  var tab=e.target.dataset.tab;
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  e.target.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('panel-'+tab).classList.add('active');
+});
+
+/* TESTIMONIALS */
+var tIndex=0;
+var tSlides=document.querySelectorAll('.testimonial-slide');
+var tTrack=document.getElementById('testimonialTrack');
+var tDots=document.getElementById('tDots');
+tSlides.forEach(function(_,i){
+  var d=document.createElement('span');
+  d.className='t-dot'+(i===0?' active':'');
+  d.onclick=function(){goToTestimonial(i)};
+  tDots.appendChild(d);
+});
+function goToTestimonial(i){
+  tIndex=((i%tSlides.length)+tSlides.length)%tSlides.length;
+  tTrack.style.transform='translateX(-'+tIndex*100+'%)';
+  document.querySelectorAll('.t-dot').forEach(function(d,j){d.classList.toggle('active',j===tIndex)});
+}
+function moveTestimonial(dir){goToTestimonial(tIndex+dir)}
+setInterval(function(){moveTestimonial(1)},6000);
+
+/* TRUST COUNTERS */
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(!entry.isIntersecting)return;
+    var el=entry.target;
+    var target=parseFloat(el.dataset.target);
+    var suffix=el.dataset.suffix||'';
+    var duration=1800;
+    var start=performance.now();
+    function tick(now){
+      var p=Math.min((now-start)/duration,1);
+      var eased=1-Math.pow(1-p,3);
+      var val=target<10?(target*eased).toFixed(1):Math.round(target*eased);
+      el.textContent=val.toLocaleString()+suffix;
+      if(p<1)requestAnimationFrame(tick);
     }
-  </script>
+    requestAnimationFrame(tick);
+    observer.unobserve(el);
+  });
+},{threshold:0.4});
+document.querySelectorAll('.ts-num[data-target]').forEach(function(el){observer.observe(el)});
+
+/* FAQ */
+function toggleFAQ(btn){
+  var item=btn.parentElement;
+  var wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(i){i.classList.remove('open')});
+  if(!wasOpen)item.classList.add('open');
+}
+function filterFAQ(){
+  var q=document.getElementById('faqSearch').value.toLowerCase();
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    var text=item.textContent.toLowerCase();
+    item.classList.toggle('faq-hidden',q.length>0&&!text.includes(q));
+  });
+}
+
+/* CHATBOT */
+var chatState={step:0,companyType:'',operations:[]};
+function toggleChatbot(){
+  document.getElementById('chatbot').classList.toggle('open');
+  if(document.getElementById('chatbot').classList.contains('open')){
+    document.getElementById('chatBody').scrollTop=document.getElementById('chatBody').scrollHeight;
+  }
+}
+function sendChatMessage(msg){
+  var body=document.getElementById('chatBody');
+  var userMsg=document.createElement('div');
+  userMsg.className='cb-msg user';
+  userMsg.textContent=msg;
+  body.appendChild(userMsg);
+  setTimeout(function(){
+    var botMsg=document.createElement('div');
+    botMsg.className='cb-msg bot';
+    var lower=msg.toLowerCase();
+    if(chatState.step===0){
+      if(lower.indexOf('retail')!==-1||lower.indexOf('e-commerce')!==-1||lower.indexOf('tienda')!==-1){
+        chatState.companyType='Retail/E-commerce';
+      }else if(lower.indexOf('salud')!==-1||lower.indexOf('hospital')!==-1||lower.indexOf('clinica')!==-1){
+        chatState.companyType='Salud';
+      }else if(lower.indexOf('logistica')!==-1||lower.indexOf('transporte')!==-1||lower.indexOf('envio')!==-1){
+        chatState.companyType='Logistica';
+      }else if(lower.indexOf('finanza')!==-1||lower.indexOf('contabilidad')!==-1||lower.indexOf('banco')!==-1){
+        chatState.companyType='Finanzas';
+      }else if(lower.indexOf('manufactura')!==-1||lower.indexOf('fabrica')!==-1||lower.indexOf('planta')!==-1){
+        chatState.companyType='Manufactura';
+      }else{
+        chatState.companyType='Empresa general';
+      }
+      chatState.step=1;
+      botMsg.textContent='Entendido, '+chatState.companyType+'. Ahora dime: que operaciones especificas te gustaria optimizar? Por ejemplo: facturacion, inventario, atencion al cliente, monitoreo de equipos, reportes, etc.';
+      botMsg.innerHTML=botMsg.textContent;
+      updateSuggestions(['Facturacion y cobros','Inventario y stock','Atencion al cliente','Monitoreo IoT / equipos','Reportes y analisis','Procesos administrativos']);
+    }else if(chatState.step===1){
+      var ops=[];
+      if(lower.indexOf('factura')!==-1||lower.indexOf('cobro')!==-1)ops.push('Facturacion');
+      if(lower.indexOf('inventario')!==-1||lower.indexOf('stock')!==-1)ops.push('Inventario');
+      if(lower.indexOf('atencion')!==-1||lower.indexOf('cliente')!==-1||lower.indexOf('soporte')!==-1)ops.push('Atencion al cliente');
+      if(lower.indexOf('iot')!==-1||lower.indexOf('monitoreo')!==-1||lower.indexOf('equipo')!==-1||lower.indexOf('sensor')!==-1)ops.push('Monitoreo IoT');
+      if(lower.indexOf('reporte')!==-1||lower.indexOf('analisis')!==-1||lower.indexOf('dashboard')!==-1)ops.push('Reportes');
+      if(lower.indexOf('admin')!==-1||lower.indexOf('proceso')!==-1)ops.push('Procesos administrativos');
+      if(ops.length===0)ops.push('Operaciones generales');
+      chatState.operations=ops;
+      chatState.step=2;
+      botMsg.innerHTML='Perfecto! Basado en <b>'+chatState.companyType+'</b> y tu interes en <b>'+ops.join(', ')+'</b>, he preparado un analisis preliminar:<br><br>📊 <b>Potencial de ahorro estimado:</b> 65-80% del tiempo actual<br>⚡ <b>Tiempo de implementacion:</b> 2-4 semanas<br>🔧 <b>Tecnologias recomendadas:</b> RPA + APIs + Dashboard en tiempo real<br><br>Te gustaria que te envie un reporte detallado? Dejame tu email y te lo mando sin costo.';
+      updateSuggestions(['Si, quiero mi reporte gratis','Cuanto cuesta implementar?','Quiero hablar con un experto']);
+    }else{
+      if(lower.indexOf('email')!==-1||lower.indexOf('@')!==-1||lower.indexOf('reporte')!==-1||lower.indexOf('gratis')!==-1){
+        botMsg.innerHTML='Excelente! Para recibir tu reporte personalizado, por favor ingresa tu email en el formulario que aparece al final de la pagina. Te enviaremos el analisis completo en menos de 24 horas. 🚀';
+      }else if(lower.indexOf('cuesta')!==-1||lower.indexOf('precio')!==-1||lower.indexOf('costo')!==-1){
+        botMsg.innerHTML='Cada proyecto es unico. El costo depende del alcance y complejidad. La buena noticia: la mayoria de nuestros clientes recuperan la inversion en <b>2-4 meses</b>. Te gustaria agendar una llamada con un especialista?';
+      }else{
+        botMsg.innerHTML='Me encantaria ayudarte mas a fondo. Quieres que uno de nuestros especialistas te contacte para una demo personalizada sin costo?';
+      }
+      updateSuggestions(['Si, agendar demo','Quiero mi reporte gratis','Hablar con un experto']);
+    }
+    body.appendChild(botMsg);
+    body.scrollTop=body.scrollHeight;
+  },600);
+}
+function updateSuggestions(items){
+  var cont=document.getElementById('chatSuggestions');
+  cont.innerHTML=items.map(function(t){return '<button class="cb-sugg" onclick="sendChatMessage(\''+t.replace(/'/g,"\\'")+'\')">'+t+'</button>'}).join('');
+}
+
+/* CTA FORM */
+function handleCTASubmit(e){
+  e.preventDefault();
+  var btn=e.target.querySelector('button');
+  var orig=btn.textContent;
+  btn.textContent='✅ Enviado!';
+  btn.style.background='#1cc060';
+  setTimeout(function(){btn.textContent=orig;btn.style.background='';document.getElementById('ctaEmail').value=''},3000);
+}
+
+/* SMOOTH SCROLL */
+function scrollToSection(id){
+  var el=document.getElementById(id);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'start'})}
+}
+
+/* LIVE DASHBOARD */
+setInterval(function(){
+  var pEl=document.getElementById('liveProcesses');
+  var hEl=document.getElementById('liveHours');
+  if(pEl)pEl.textContent=Math.floor(830+Math.random()*35);
+  if(hEl)hEl.textContent=(12.4+Math.random()*0.3).toFixed(1)+'k';
+},5000);
+
+updateROI();
+</script>
 </body>
 </html>
