@@ -273,6 +273,12 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
 .chatbot-suggestions{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:1px solid rgba(255,255,255,0.06)}
 .cb-sugg{font-size:0.75rem;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.65);transition:background 0.2s,color 0.2s}
 .cb-sugg:hover{background:rgba(255,255,255,0.14);color:#fff}
+.chatbot-input-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid rgba(255,255,255,0.06)}
+.chatbot-input{flex:1;padding:10px 14px;border-radius:99px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#fff;font-size:0.82rem;outline:none;transition:border-color 0.2s}
+.chatbot-input:focus{border-color:var(--accent)}
+.chatbot-input::placeholder{color:rgba(255,255,255,0.3)}
+.chatbot-send{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#000;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s}
+.chatbot-send:hover{background:var(--accent-hover)}
 </style>
 </head>
 <body>
@@ -741,15 +747,11 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
       <span class="cb-status"></span>
       NovaLink Assistant — En línea
     </div>
-    <div class="chatbot-body" id="chatBody">
-      <div class="cb-msg bot">👋 ¡Hola! Soy el agente virtual de NovaLink. Cuéntame sobre tu empresa: ¿en qué sector operas y qué tipo de operaciones te gustaría optimizar? Estoy aquí para mostrarte cómo la automatización puede transformar tu negocio.</div>
-    </div>
-    <div class="chatbot-suggestions" id="chatSuggestions">
-      <button class="cb-sugg" onclick="sendChatMessage('Tengo un negocio de retail/e-commerce')">🏪 Retail / E-commerce</button>
-      <button class="cb-sugg" onclick="sendChatMessage('Estoy en el sector salud')">🏥 Sector Salud</button>
-      <button class="cb-sugg" onclick="sendChatMessage('Mi empresa es de logística y transporte')">🚚 Logística</button>
-      <button class="cb-sugg" onclick="sendChatMessage('Trabajo en finanzas o contabilidad')">🏦 Finanzas</button>
-      <button class="cb-sugg" onclick="sendChatMessage('Tengo una empresa de manufactura')">🏭 Manufactura</button>
+    <div class="chatbot-body" id="chatBody"></div>
+    <div class="chatbot-suggestions" id="chatSuggestions"></div>
+    <div class="chatbot-input-row">
+      <input type="text" class="chatbot-input" id="chatInput" placeholder="Escribe tu mensaje..." onkeypress="if(event.key==='Enter')sendMessage()">
+      <button class="chatbot-send" onclick="sendMessage()">➤</button>
     </div>
   </div>
 </div>
@@ -919,6 +921,14 @@ function showTyping(){
 function hideTyping(){
   var el = document.getElementById('typingIndicator');
   if(el) el.remove();
+}
+
+function sendMessage(){
+  var input = document.getElementById('chatInput');
+  var msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+  sendChatMessage(msg);
 }
 
 async function sendChatMessage(msg){

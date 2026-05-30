@@ -1,7 +1,7 @@
 """
 NovaLink Assistant API
 Backend para el chatbot de la landing page.
-Sectorización por industria y captura de leads.
+Flujo: Demo → Análisis gratuito → Email → Odoo CRM
 """
 
 import json
@@ -10,7 +10,8 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+import httpx
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -23,9 +24,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Data ──────────────────────────────────────────────────────────────
+# ── Config ────────────────────────────────────────────────────────────
 
 LEADS_FILE = Path(os.environ.get("LEADS_FILE", "/data/leads.json"))
+LLM_API_KEY = os.environ.get("LLM_API_KEY", "")
+LLM_MODEL = os.environ.get("LLM_MODEL", "deepseek-chat")
+LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "https://api.deepseek.com/v1")
+
+# ── Data ──────────────────────────────────────────────────────────────
 
 INDUSTRIES = [
     "🏪 Retail / E-commerce",
@@ -67,7 +73,7 @@ COMPANY_SIZES = [
     "500+ empleados",
 ]
 
-# ── Session store (in-memory) ────────────────────────────────────────
+# ── Session store ─────────────────────────────────────────────────────
 
 sessions: dict[str, dict] = {}
 
@@ -85,26 +91,38 @@ def save_lead(lead: dict):
     LEADS_FILE.write_text(json.dumps(leads, indent=2, ensure_ascii=False))
 
 
+# ── Odoo CRM placeholder ─────────────────────────────────────────────
+# TODO: Integrar con Odoo CRM API cuando esté disponible
+# POST lead → Odoo crm.lead via XML-RPC or REST API
+
+async def push_to_odoo(lead: dict):
+    """Push lead to Odoo CRM. Placeholder — implement when Odoo is ready."""
+    # odoo_url = os.environ.get("ODOO_URL")
+    # odoo_db = os.environ.get("ODOO_DB")
+    # odoo_user = os.environ.get("ODOO_USER")
+    # odoo_pass = os.environ.get("ODOO_PASS")
+    print(f"[ODOO CRM] Lead ready: {lead['email']} — {lead['industry']}")
+
+
 # ── LLM Integration ──────────────────────────────────────────────────
-# Config via environment variables:
-#   LLM_API_KEY  - API key for the LLM provider
-#   LLM_MODEL    - Model name (default: deepseek-chat)
-#   LLM_BASE_URL - API base URL (default: https://api.deepseek.com/v1)
 
-import httpx
+NOVALINK_SYSTEM_PROMPT = """Eres NovaLink Assistant, un agente virtual experto en automatización 
+empresarial para NovaLink (www.novalinkdo.com). Tu objetivo es conversar con el visitante, 
+entender su negocio y mostrarle cómo la automatización puede ahorrarle tiempo y dinero.
 
-LLM_API_KEY = os.environ.get("LLM_API_KEY", "")
-LLM_MODEL = os.environ.get("LLM_MODEL", "deepseek-chat")
-LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "https://api.deepseek.com/v1")
+Reglas:
+- Sé cálido, profesional y entusiasta. Háblale de tú.
+- Haz preguntas para entender su industria, procesos y tamaño de empresa.
+- Muestra ejemplos concretos de automatización relevantes para su sector.
+- Al final, ofrécele un análisis personalizado gratuito a cambio de su email.
+- NO inventes precios ni garantías específicas.
+- Responde en español, en 2-4 oraciones por mensaje."""
 
 
 async def call_llm(system_prompt: str, user_message: str) -> str:
-    """
-    Calls the configured LLM API. Falls back to empty string (template response)
-    if no API key is configured or the call fails.
-    """
+    """Calls LLM API. Falls back to empty string if not configured."""
     if not LLM_API_KEY:
-        return ""  # No LLM configured → use template fallback
+        return ""
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -129,7 +147,7 @@ async def call_llm(system_prompt: str, user_message: str) -> str:
             return data["choices"][0]["message"]["content"]
     except Exception as e:
         print(f"LLM call failed: {e}")
-        return ""  # Fallback to template
+        return ""
 
 
 # ── API Models ───────────────────────────────────────────────────────
@@ -138,10 +156,6 @@ class ChatRequest(BaseModel):
     message: str
     session_id: str | None = None
     step: int = 0
-    industry: str | None = None
-    processes: list[str] | None = None
-    company_size: str | None = None
-    email: str | None = None
 
 
 class ChatResponse(BaseModel):
@@ -155,7 +169,7 @@ class ChatResponse(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "llm_configured": bool(LLM_API_KEY)}
 
 
 @app.post("/api/chat", response_model=ChatResponse)
@@ -167,90 +181,140 @@ async def chat(req: ChatRequest):
 
     session = sessions[sid]
     msg = req.message.strip()
-    lower = msg.lower()
 
-    # ── STEP 0: Bienvenida y sectorización ──────────────────────────
+    # ── STEP 0: Bienvenida → Sectorizar ─────────────────────────────
     if session["step"] == 0:
         session["step"] = 1
+
+        llm_greeting = await call_llm(
+            NOVALINK_SYSTEM_PROMPT,
+            "Saluda al visitante y pregúntale a qué industria pertenece su empresa. "
+            "Sé breve y amigable. No des opciones, solo pregunta.",
+        )
+
+        greeting = llm_greeting or (
+            "👋 ¡Hola! Soy el asistente virtual de **NovaLink**. "
+            "Mi objetivo es mostrarte cómo la automatización puede transformar tu empresa "
+            "en cuestión de semanas.\n\n"
+            "Para empezar, ¿en qué **industria** opera tu negocio?"
+        )
         return ChatResponse(
             session_id=sid,
-            bot_message=(
-                "👋 ¡Hola! Soy el asistente virtual de **NovaLink**. "
-                "Estoy aquí para mostrarte cómo la automatización puede transformar tu empresa.\n\n"
-                "Para empezar, ¿a qué **industria** pertenece tu negocio?"
-            ),
+            bot_message=greeting,
             suggestions=INDUSTRIES,
             step=1,
         )
 
-    # ── STEP 1: Recibir industria → preguntar procesos ──────────────
+    # ── STEP 1: Industria → Preguntar procesos ──────────────────────
     elif session["step"] == 1:
-        # Buscar si el mensaje coincide con una industria de la lista
-        matched = None
+        matched = msg
         for ind in INDUSTRIES:
             ind_clean = ind.split(" ", 1)[1] if " " in ind else ind
-            if ind_clean.lower() in lower or lower in ind_clean.lower():
+            if ind_clean.lower() in msg.lower():
                 matched = ind
                 break
-        if not matched:
-            matched = msg  # usar lo que escribió
 
         session["data"]["industry"] = matched
         session["step"] = 2
+
+        llm_resp = await call_llm(
+            NOVALINK_SYSTEM_PROMPT,
+            f"El visitante dice que su empresa pertenece a la industria: {matched}. "
+            "Confirma que es un gran sector para automatizar (da una razón breve y concreta). "
+            "Luego pregúntale qué procesos u operaciones le gustaría optimizar.",
+        )
+
+        response_text = llm_resp or (
+            f"¡**{matched}**! Excelente sector para automatizar. "
+            "Hemos ayudado a muchas empresas como la tuya a reducir costos operativos "
+            "y eliminar tareas repetitivas.\n\n"
+            "Cuéntame, ¿qué **procesos** te quitan más tiempo en el día a día? "
+            "Puedes seleccionar varios o escribir lo que prefieras."
+        )
         return ChatResponse(
             session_id=sid,
-            bot_message=(
-                f"¡Excelente! **{matched}** es un sector con mucho potencial de automatización.\n\n"
-                "Ahora dime, ¿qué **procesos u operaciones** te gustaría optimizar? "
-                "Puedes seleccionar varios."
-            ),
+            bot_message=response_text,
             suggestions=PROCESSES,
             step=2,
         )
 
-    # ── STEP 2: Recibir procesos → preguntar tamaño ─────────────────
+    # ── STEP 2: Procesos → Preguntar tamaño ────────────────────────
     elif session["step"] == 2:
         processes = []
         for proc in PROCESSES:
             proc_clean = proc.split(" ", 1)[1] if " " in proc else proc
-            if proc_clean.lower() in lower:
+            if proc_clean.lower() in msg.lower():
                 processes.append(proc)
         if not processes:
             processes = [msg]
 
         session["data"]["processes"] = processes
         session["step"] = 3
+
         return ChatResponse(
             session_id=sid,
             bot_message=(
                 "Entendido. Para afinar el análisis, ¿aproximadamente "
-                "**cuántos empleados** tiene tu empresa?"
+                "**cuántas personas** trabajan en tu empresa?"
             ),
             suggestions=COMPANY_SIZES,
             step=3,
         )
 
-    # ── STEP 3: Recibir tamaño → pedir email ────────────────────────
+    # ── STEP 3: Tamaño → Output gratuito (análisis) ────────────────
     elif session["step"] == 3:
         size = msg
         for cs in COMPANY_SIZES:
-            if cs.lower() in lower:
+            if cs.lower() in msg.lower():
                 size = cs
                 break
+
         session["data"]["company_size"] = size
         session["step"] = 4
+
+        d = session["data"]
+
+        llm_analysis = await call_llm(
+            NOVALINK_SYSTEM_PROMPT,
+            f"Genera un análisis preliminar de automatización para este perfil:\n"
+            f"- Industria: {d.get('industry')}\n"
+            f"- Procesos a optimizar: {', '.join(d.get('processes', []))}\n"
+            f"- Tamaño de empresa: {d.get('company_size')}\n\n"
+            "Estructura tu respuesta así:\n"
+            "1. Un dato-impacto relevante para su sector\n"
+            "2. 2-3 automatizaciones concretas que aplicarías\n"
+            "3. Una estimación conservadora de tiempo ahorrado\n"
+            "4. Termina pidiendo su email para enviarle el análisis completo\n"
+            "Sé específico para su industria. No uses placeholders genéricos.",
+        )
+
+        if llm_analysis:
+            analysis = llm_analysis
+        else:
+            analysis = (
+                f"📊 **Análisis preliminar — {d.get('industry', 'tu empresa')}**\n\n"
+                f"Basado en empresas similares que hemos ayudado, estas son las "
+                f"oportunidades que detectamos:\n\n"
+                f"🔹 **Procesos críticos:** {', '.join(d.get('processes', []))}\n"
+                f"🔹 **Escala:** {d.get('company_size', '—')}\n\n"
+                f"⚡ **Ahorro estimado:** 55-75% del tiempo actual\n"
+                f"⏱️ **Tiempo de implementación:** 2-6 semanas\n"
+                f"🔄 **Tecnología sugerida:** RPA + APIs + Dashboard en tiempo real\n\n"
+                f"¿Te envío el **análisis completo sin costo** a tu email?"
+            )
+
         return ChatResponse(
             session_id=sid,
-            bot_message=(
-                "¡Perfecto! Ya tengo todo para prepararte un análisis.\n\n"
-                "Para enviarte el **reporte personalizado sin costo**, "
-                "¿me compartes tu email corporativo?"
-            ),
-            suggestions=[],
+            bot_message=analysis,
+            suggestions=[
+                "📧 Sí, enviar a mi email",
+                "📞 Prefiero que me llamen",
+                "💬 Tengo otra pregunta",
+            ],
             step=4,
         )
 
-    # ── STEP 4: Recibir email → generar resumen y guardar lead ──────
+    # ── STEP 4: Recibir email → Guardar lead + Odoo ────────────────
     elif session["step"] == 4:
         email = msg if "@" in msg else f"{msg} (pendiente)"
         session["data"]["email"] = email
@@ -258,7 +322,6 @@ async def chat(req: ChatRequest):
 
         d = session["data"]
 
-        # Guardar lead
         lead = {
             "session_id": sid,
             "timestamp": datetime.now().isoformat(),
@@ -269,59 +332,46 @@ async def chat(req: ChatRequest):
         }
         save_lead(lead)
 
-        # Intentar usar LLM para el resumen; si no, usar template
-        llm_response = await call_llm(
-            system_prompt=(
-                "Eres NovaLink Assistant, experto en automatización empresarial. "
-                "Genera un resumen de análisis personalizado para un lead."
-            ),
-            user_message=(
-                f"Industria: {d.get('industry')}\n"
-                f"Procesos: {', '.join(d.get('processes', []))}\n"
-                f"Tamaño: {d.get('company_size')}\n"
-                f"Genera un breve análisis de automatización."
-            ),
-        )
-
-        if llm_response:
-            analysis = llm_response
-        else:
-            analysis = (
-                f"📊 **Análisis preliminar para {d.get('industry', 'tu empresa')}**\n\n"
-                f"🔹 **Procesos a optimizar:** {', '.join(d.get('processes', []))}\n"
-                f"🔹 **Tamaño de empresa:** {d.get('company_size', '—')}\n\n"
-                f"⚡ **Potencial de ahorro estimado:** 55-75% del tiempo actual\n"
-                f"🔄 **Tecnologías sugeridas:** RPA + APIs + Dashboard en tiempo real\n"
-                f"⏱️ **Tiempo de implementación:** 2-6 semanas\n\n"
-                f"Te enviaremos el análisis completo a **{email}** en las próximas 24 horas."
-            )
+        # Push a Odoo CRM (placeholder)
+        await push_to_odoo(lead)
 
         return ChatResponse(
             session_id=sid,
             bot_message=(
-                f"{analysis}\n\n"
-                "¿Quieres que un especialista te contacte para una demo personalizada?"
+                f"¡Perfecto! ✅ Enviaremos tu análisis completo a **{email}** "
+                f"en las próximas 24 horas.\n\n"
+                "Un especialista de NovaLink revisará tu caso personalmente "
+                "y te contactará con recomendaciones específicas para tu empresa.\n\n"
+                "¿Hay algo más en lo que pueda ayudarte mientras tanto?"
             ),
             suggestions=[
-                "✅ Agendar demo personalizada",
-                "📧 Quiero mi reporte por email",
+                "🔄 Empezar de nuevo",
+                "📞 Quiero una demo personalizada",
                 "💬 Tengo otra consulta",
             ],
             step=5,
         )
 
-    # ── STEP 5+: Conversación libre (placeholder para LLM) ──────────
+    # ── STEP 5+: Conversación libre (LLM-powered si está configurado) ──
     else:
+        llm_free = await call_llm(
+            NOVALINK_SYSTEM_PROMPT,
+            f"El visitante dice: '{msg}'. Contexto de su sesión: {json.dumps(session['data'])}. "
+            "Responde de forma útil. Si pide empezar de nuevo, indícale que sí.",
+        )
+
+        free_resp = llm_free or (
+            "¡Claro! Cuéntame más sobre lo que necesitas y te ayudo "
+            "a encontrar la mejor solución de automatización para tu empresa."
+        )
+
         return ChatResponse(
             session_id=sid,
-            bot_message=(
-                "¡Gracias por tu interés! Un especialista de NovaLink te contactará pronto. "
-                "Mientras tanto, ¿hay algo más en lo que pueda ayudarte?"
-            ),
+            bot_message=free_resp,
             suggestions=[
-                "📧 Reenviar reporte",
                 "🔄 Empezar de nuevo",
-                "💬 Otra consulta",
+                "📞 Agendar demo",
+                "📧 Enviar análisis",
             ],
             step=session["step"],
         )
