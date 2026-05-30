@@ -367,9 +367,30 @@ async def chat(req: ChatRequest):
             step=4,
         )
 
-    # ── STEP 4: Recibir email → Guardar lead + Odoo ────────────────
+    # ── STEP 4: Recibir email → Validar y guardar lead + Odoo ──────
     elif session["step"] == 4:
-        email = msg if "@" in msg else f"{msg} (pendiente)"
+        # Validar email
+        import re
+        email_regex = r"[^@\s]+@[^@\s]+\.[^@\s]+"
+        is_email = bool(re.match(email_regex, msg))
+
+        if not is_email:
+            # No es un email válido → pedir de nuevo
+            return ChatResponse(
+                session_id=sid,
+                bot_message=(
+                    "Para enviarte el análisis completo, necesito un **email válido**. "
+                    "Por ejemplo: `tu@empresa.com`\n\n"
+                    "¿Me lo compartes?"
+                ),
+                suggestions=[
+                    "📧 Sí, enviar a mi email",
+                    "📞 Prefiero que me llamen",
+                ],
+                step=4,  # Se queda en step 4 hasta que dé un email válido
+            )
+
+        email = msg
         session["data"]["email"] = email
         session["step"] = 5
 
