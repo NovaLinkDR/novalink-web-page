@@ -153,6 +153,41 @@ async def push_to_odoo(lead: dict):
         )
         print(f"[ODOO] Lead creado — ID: {lead_id} — {industry} — {email}")
 
+        # Send welcome email via Odoo
+        subject = f"NovaLink — Análisis de automatización para {industry}"
+        body_html = (
+            f"<p>¡Mucho gusto, estimado/a!</p>"
+            f"<p>Notamos que en <b>{industry}</b> están enfrentando desafíos "
+            f"con <b>{processes}</b>. Tenemos amplia experiencia en este tipo "
+            f"de optimizaciones operativas y hemos ayudado a empresas similares "
+            f"a reducir hasta un 70% el tiempo en procesos manuales.</p>"
+            f"<p>Me encantaría coordinar una breve llamada para conocer más "
+            f"a fondo su operación y compartirle casos de éxito relevantes "
+            f"para su sector.</p>"
+            f"<p>¿Qué tal si agendamos 15 minutos esta semana?</p>"
+            f"<p>Quedo atento,<br><b>Equipo NovaLink</b></p>"
+            f"<p style='color:#888;font-size:12px'>"
+            f"www.novalinkdo.com | Automatización inteligente para empresas</p>"
+        )
+
+        mail_id = models.execute_kw(
+            ODOO_DB, uid, ODOO_PASSWORD,
+            "mail.mail", "create", [{
+                "subject": subject,
+                "body_html": body_html,
+                "email_to": email,
+                "model": "crm.lead",
+                "res_id": lead_id,
+                "auto_delete": True,
+            }],
+        )
+        # Send immediately
+        models.execute_kw(
+            ODOO_DB, uid, ODOO_PASSWORD,
+            "mail.mail", "send", [mail_id],
+        )
+        print(f"[ODOO] Email de bienvenida enviado a {email}")
+
     except Exception as e:
         print(f"[ODOO] Error al crear lead: {e}")
 
