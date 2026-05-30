@@ -65,9 +65,9 @@ Green accent (`#20E070`) is used on black backgrounds for maximum contrast and l
 
 | Asset | Path | Usage |
 |---|---|---|
-| Logo PNG | `references/nova-link-logotipo.png` | Nav bar and footer branding |
-| Excel (Antes) | `assets/images/excel.jpg` | Before/after slider — before side |
-| Tablet Dashboard | `assets/images/tabletdashboard.jpg` | Before/after slider — after side |
+| Logo PNG | `assets/images/nova-link-logotipo.png` | Nav bar and footer branding |
+| Excel (Antes) | `assets/images/excel.jpg` | Before/after slider — before side (with red overlay) |
+| Tablet Dashboard | `assets/images/tablet-dashboard.webp` | Before/after slider — after side (with green overlay) |
 | IoT Photo | `assets/images/IOT.jpg` | Services photo card |
 | Security Photo | `assets/images/security.jpg` | Services photo card |
 | Software Dev & Cloud | `assets/images/softwaredev&cloud.jpg` | Services photo card |
@@ -94,7 +94,7 @@ Green accent (`#20E070`) is used on black backgrounds for maximum contrast and l
 
 ### Navigation
 - Fixed top, black background (`rgba(0,0,0,0.92)`) with backdrop blur
-- Logo: `assets/logo/novalink-logo.svg` — "Nova" in white, "Link" in `#20E070`
+- Logo: `assets/images/nova-link-logotipo.png` — "Nova" in white, "Link" in `#20E070`
 - Mobile: slide-in panel from right, pure black background
 - Hamburger icon: white bars
 
@@ -123,6 +123,35 @@ The NovaLink logo is `assets/logo/novalink-logo.svg`:
 - **Animated Counters**: IntersectionObserver-triggered count-up on scroll
 - **FAQ Accordion**: Expandable items with real-time search filter
 - **Chatbot Widget**: Fixed bottom-right, keyword-matched replies, suggestion chips; green toggle button
+
+## API Backend
+
+The NovaLink Assistant is powered by a FastAPI backend at `/api/chat`:
+
+- **POST /api/chat**: Receives `{message, session_id, step}` → returns `{session_id, bot_message, suggestions, step}`
+- **GET /api/health**: Health check
+- Session state is stored in-memory with UUID-based session IDs
+- Leads are persisted to `/data/leads.json` as JSON array
+
+### Conversation Flow
+
+| Step | Action | Response |
+|---|---|---|
+| 0 | Init | Welcome + 14 industry options |
+| 1 | Industry selected | Confirm + 12 process options |
+| 2 | Processes selected | Confirm + 5 company size options |
+| 3 | Size selected | Request email |
+| 4 | Email received | Generate analysis, save lead, offer demo |
+
+### LLM Integration
+
+The `call_llm()` function in `api/main.py` is a placeholder ready for connection to DeepSeek, OpenAI, or any compatible API. Set environment variables `LLM_API_KEY` and `LLM_MODEL` when ready.
+
+### Docker
+
+- `novalink-api`: Python 3.12 FastAPI service on port 8000
+- `novalink-web`: Nginx reverse proxy — `/api/*` → `novalink-api:8000`
+- Leads persisted via Docker volume `novalink_data`
 
 ## Responsive Breakpoints
 

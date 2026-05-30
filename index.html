@@ -151,6 +151,7 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.3)}
 .ba-after{background:#0a1a1a;clip-path:inset(0 0 0 50%)}
 .ba-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ba-green-overlay{position:absolute;inset:0;background:rgba(32,224,112,0.15);pointer-events:none;z-index:2}
+.ba-red-overlay{position:absolute;inset:0;background:rgba(220,38,38,0.18);pointer-events:none;z-index:2}
 .ba-scene{position:relative;z-index:3;padding:clamp(16px,3vw,32px);height:100%;display:flex;flex-direction:column;justify-content:flex-end}
 .ba-badge{display:inline-block;padding:5px 12px;border-radius:4px;font-size:0.68rem;font-weight:700;letter-spacing:0.06em;margin-bottom:8px;width:fit-content}
 .ba-before .ba-badge{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
@@ -280,7 +281,7 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
 <nav id="nav">
   <div class="container nav-inner">
     <a href="#inicio" class="nav-logo">
-      <img src="references/nova-link-logotipo.png" alt="NovaLink">
+      <img src="assets/images/nova-link-logotipo.png" alt="NovaLink">
     </a>
     <ul class="nav-links" id="navLinks">
       <li><a href="#demos" onclick="closeNav()">Demos</a></li>
@@ -387,7 +388,8 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
     <div class="ba-wrapper" id="baWrapper">
       <div class="ba-img-wrap">
         <div class="ba-before" id="baBefore">
-          <img class="ba-bg-img" src="assets/images/excel.jpg" alt="Proceso manual con hojas de cálculo" onerror="this.style.display='none'">
+          <img class="ba-bg-img" src="assets/images/excel.jpg?v=2" alt="Proceso manual con hojas de cálculo" onerror="this.style.display='none'">
+          <div class="ba-red-overlay"></div>
           <div class="ba-scene">
             <div class="ba-badge">ANTES — Manual</div>
             <div style="color:rgba(255,255,255,0.6);font-size:0.85rem;text-shadow:0 1px 4px rgba(0,0,0,0.6)">Hojas de cálculo, entrada manual, errores frecuentes</div>
@@ -399,7 +401,7 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
           </div>
         </div>
         <div class="ba-after" id="baAfter">
-          <img class="ba-bg-img" src="assets/images/tablet_dashboard.webp" alt="Dashboard automatizado en tablet" onerror="this.style.display='none'">
+          <img class="ba-bg-img" src="assets/images/tablet-dashboard.webp?v=2" alt="Dashboard automatizado en tablet" onerror="this.style.display='none'">
           <div class="ba-green-overlay"></div>
           <div class="ba-scene">
             <div class="ba-badge">DESPUÉS — Automatizado</div>
@@ -703,7 +705,7 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <img src="references/nova-link-logotipo.png" alt="NovaLink" class="footer-logo-img">
+        <img src="assets/images/nova-link-logotipo.png" alt="NovaLink" class="footer-logo-img">
         <p>Automatización inteligente para empresas que quieren dejar atrás los procesos manuales. IoT, datos y cloud trabajando para ti.</p>
       </div>
       <div class="footer-col">
@@ -870,72 +872,99 @@ function filterFAQ(){
   });
 }
 
-/* CHATBOT */
-var chatState={step:0,companyType:'',operations:[]};
+/* CHATBOT — NovaLink Assistant API */
+var chatSessionId = null;
+var chatStep = 0;
+
 function toggleChatbot(){
-  document.getElementById('chatbot').classList.toggle('open');
-  if(document.getElementById('chatbot').classList.contains('open')){
-    document.getElementById('chatBody').scrollTop=document.getElementById('chatBody').scrollHeight;
+  var cb = document.getElementById('chatbot');
+  cb.classList.toggle('open');
+  if(cb.classList.contains('open')){
+    document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
+    // Iniciar conversación si es primera vez
+    if(chatStep === 0 && chatSessionId === null){
+      sendChatMessage('__init__');
+    }
   }
 }
-function sendChatMessage(msg){
-  var body=document.getElementById('chatBody');
-  var userMsg=document.createElement('div');
-  userMsg.className='cb-msg user';
-  userMsg.textContent=msg;
-  body.appendChild(userMsg);
-  setTimeout(function(){
-    var botMsg=document.createElement('div');
-    botMsg.className='cb-msg bot';
-    var lower=msg.toLowerCase();
-    if(chatState.step===0){
-      if(lower.indexOf('retail')!==-1||lower.indexOf('e-commerce')!==-1||lower.indexOf('tienda')!==-1){
-        chatState.companyType='Retail/E-commerce';
-      }else if(lower.indexOf('salud')!==-1||lower.indexOf('hospital')!==-1||lower.indexOf('clinica')!==-1){
-        chatState.companyType='Salud';
-      }else if(lower.indexOf('logistica')!==-1||lower.indexOf('transporte')!==-1||lower.indexOf('envio')!==-1){
-        chatState.companyType='Logistica';
-      }else if(lower.indexOf('finanza')!==-1||lower.indexOf('contabilidad')!==-1||lower.indexOf('banco')!==-1){
-        chatState.companyType='Finanzas';
-      }else if(lower.indexOf('manufactura')!==-1||lower.indexOf('fabrica')!==-1||lower.indexOf('planta')!==-1){
-        chatState.companyType='Manufactura';
-      }else{
-        chatState.companyType='Empresa general';
-      }
-      chatState.step=1;
-      botMsg.textContent='Entendido, '+chatState.companyType+'. Ahora dime: que operaciones especificas te gustaria optimizar? Por ejemplo: facturacion, inventario, atencion al cliente, monitoreo de equipos, reportes, etc.';
-      botMsg.innerHTML=botMsg.textContent;
-      updateSuggestions(['Facturacion y cobros','Inventario y stock','Atencion al cliente','Monitoreo IoT / equipos','Reportes y analisis','Procesos administrativos']);
-    }else if(chatState.step===1){
-      var ops=[];
-      if(lower.indexOf('factura')!==-1||lower.indexOf('cobro')!==-1)ops.push('Facturacion');
-      if(lower.indexOf('inventario')!==-1||lower.indexOf('stock')!==-1)ops.push('Inventario');
-      if(lower.indexOf('atencion')!==-1||lower.indexOf('cliente')!==-1||lower.indexOf('soporte')!==-1)ops.push('Atencion al cliente');
-      if(lower.indexOf('iot')!==-1||lower.indexOf('monitoreo')!==-1||lower.indexOf('equipo')!==-1||lower.indexOf('sensor')!==-1)ops.push('Monitoreo IoT');
-      if(lower.indexOf('reporte')!==-1||lower.indexOf('analisis')!==-1||lower.indexOf('dashboard')!==-1)ops.push('Reportes');
-      if(lower.indexOf('admin')!==-1||lower.indexOf('proceso')!==-1)ops.push('Procesos administrativos');
-      if(ops.length===0)ops.push('Operaciones generales');
-      chatState.operations=ops;
-      chatState.step=2;
-      botMsg.innerHTML='Perfecto! Basado en <b>'+chatState.companyType+'</b> y tu interes en <b>'+ops.join(', ')+'</b>, he preparado un analisis preliminar:<br><br>📊 <b>Potencial de ahorro estimado:</b> 65-80% del tiempo actual<br>⚡ <b>Tiempo de implementacion:</b> 2-4 semanas<br>🔧 <b>Tecnologias recomendadas:</b> RPA + APIs + Dashboard en tiempo real<br><br>Te gustaria que te envie un reporte detallado? Dejame tu email y te lo mando sin costo.';
-      updateSuggestions(['Si, quiero mi reporte gratis','Cuanto cuesta implementar?','Quiero hablar con un experto']);
-    }else{
-      if(lower.indexOf('email')!==-1||lower.indexOf('@')!==-1||lower.indexOf('reporte')!==-1||lower.indexOf('gratis')!==-1){
-        botMsg.innerHTML='Excelente! Para recibir tu reporte personalizado, por favor ingresa tu email en el formulario que aparece al final de la pagina. Te enviaremos el analisis completo en menos de 24 horas. 🚀';
-      }else if(lower.indexOf('cuesta')!==-1||lower.indexOf('precio')!==-1||lower.indexOf('costo')!==-1){
-        botMsg.innerHTML='Cada proyecto es unico. El costo depende del alcance y complejidad. La buena noticia: la mayoria de nuestros clientes recuperan la inversion en <b>2-4 meses</b>. Te gustaria agendar una llamada con un especialista?';
-      }else{
-        botMsg.innerHTML='Me encantaria ayudarte mas a fondo. Quieres que uno de nuestros especialistas te contacte para una demo personalizada sin costo?';
-      }
-      updateSuggestions(['Si, agendar demo','Quiero mi reporte gratis','Hablar con un experto']);
-    }
-    body.appendChild(botMsg);
-    body.scrollTop=body.scrollHeight;
-  },600);
+
+function appendBotMsg(html){
+  var body = document.getElementById('chatBody');
+  var botMsg = document.createElement('div');
+  botMsg.className = 'cb-msg bot';
+  botMsg.innerHTML = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+  body.appendChild(botMsg);
+  body.scrollTop = body.scrollHeight;
 }
+
+function appendUserMsg(text){
+  var body = document.getElementById('chatBody');
+  var userMsg = document.createElement('div');
+  userMsg.className = 'cb-msg user';
+  userMsg.textContent = text;
+  body.appendChild(userMsg);
+  body.scrollTop = body.scrollHeight;
+}
+
+function showTyping(){
+  var body = document.getElementById('chatBody');
+  var typing = document.createElement('div');
+  typing.className = 'cb-msg bot';
+  typing.id = 'typingIndicator';
+  typing.textContent = '...';
+  body.appendChild(typing);
+  body.scrollTop = body.scrollHeight;
+}
+
+function hideTyping(){
+  var el = document.getElementById('typingIndicator');
+  if(el) el.remove();
+}
+
+async function sendChatMessage(msg){
+  appendUserMsg(msg);
+  showTyping();
+
+  try {
+    var payload = {
+      message: msg,
+      session_id: chatSessionId,
+      step: chatStep
+    };
+
+    var resp = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+
+    if(!resp.ok) throw new Error('API error: ' + resp.status);
+
+    var data = await resp.json();
+    hideTyping();
+
+    chatSessionId = data.session_id;
+    chatStep = data.step;
+
+    appendBotMsg(data.bot_message);
+    updateSuggestions(data.suggestions);
+
+  } catch(err) {
+    hideTyping();
+    appendBotMsg('Lo siento, hubo un error de conexión. ¿Puedes intentar de nuevo?');
+    console.error('Chat API error:', err);
+  }
+}
+
 function updateSuggestions(items){
-  var cont=document.getElementById('chatSuggestions');
-  cont.innerHTML=items.map(function(t){return '<button class="cb-sugg" onclick="sendChatMessage(\''+t.replace(/'/g,"\\'")+'\')">'+t+'</button>'}).join('');
+  var cont = document.getElementById('chatSuggestions');
+  if(!items || items.length === 0){
+    cont.innerHTML = '';
+    return;
+  }
+  cont.innerHTML = items.map(function(t){
+    return '<button class="cb-sugg" onclick="sendChatMessage(\'' + t.replace(/'/g, "\\'") + '\')">' + t + '</button>';
+  }).join('');
 }
 
 /* CTA FORM */
