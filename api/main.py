@@ -141,7 +141,7 @@ async def push_to_odoo(lead: dict):
                 f"<p><b>Tamaño de empresa:</b> {lead.get('company_size', '')}</p>"
                 f"<p><b>Email:</b> {email}</p>"
             ),
-            "type": "lead",
+            "type": "opportunity",
             "priority": "2",  # High
             "team_id": ODOO_TEAM_ID,
             "referred": "NovaLink Web Chatbot",
