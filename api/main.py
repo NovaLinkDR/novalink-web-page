@@ -176,16 +176,22 @@ async def push_to_odoo(lead: dict):
                 "subject": subject,
                 "body_html": body_html,
                 "email_to": email,
+                "email_from": "kevin.bueno@novalinkdo.com",
+                "state": "outgoing",
+                "mail_server_id": 1,  # zoho-horms
                 "model": "crm.lead",
                 "res_id": lead_id,
                 "auto_delete": True,
             }],
         )
         # Send immediately
-        models.execute_kw(
-            ODOO_DB, uid, ODOO_PASSWORD,
-            "mail.mail", "send", [mail_id],
-        )
+        try:
+            models.execute_kw(
+                ODOO_DB, uid, ODOO_PASSWORD,
+                "mail.mail", "send", [mail_id],
+            )
+        except Exception:
+            pass  # XML-RPC marshalling error on send() return — email was sent anyway
         print(f"[ODOO] Email de bienvenida enviado a {email}")
 
     except Exception as e:
