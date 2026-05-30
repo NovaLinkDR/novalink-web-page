@@ -91,17 +91,70 @@ def save_lead(lead: dict):
     LEADS_FILE.write_text(json.dumps(leads, indent=2, ensure_ascii=False))
 
 
-# ── Odoo CRM placeholder ─────────────────────────────────────────────
-# TODO: Integrar con Odoo CRM API cuando esté disponible
-# POST lead → Odoo crm.lead via XML-RPC or REST API
+# ── Odoo CRM Integration ─────────────────────────────────────────────
+
+ODOO_URL = os.environ.get("ODOO_URL", "http://odoo:8069")
+ODOO_DB = os.environ.get("ODOO_DB", "novalink")
+ODOO_USERNAME = os.environ.get("ODOO_USERNAME", "")
+ODOO_PASSWORD = os.environ.get("ODOO_PASSWORD", "")
+ODOO_TEAM_ID = int(os.environ.get("ODOO_TEAM_ID", "1"))
+
+import xmlrpc.client
+
+
+def get_odoo_uid() -> int | None:
+    """Authenticate with Odoo and return user ID."""
+    try:
+        common = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/common")
+        return common.authenticate(ODOO_DB, ODOO_USERNAME, ODOO_PASSWORD, {})
+    except Exception as e:
+        print(f"[ODOO] Auth failed: {e}")
+        return None
+
 
 async def push_to_odoo(lead: dict):
-    """Push lead to Odoo CRM. Placeholder — implement when Odoo is ready."""
-    # odoo_url = os.environ.get("ODOO_URL")
-    # odoo_db = os.environ.get("ODOO_DB")
-    # odoo_user = os.environ.get("ODOO_USER")
-    # odoo_pass = os.environ.get("ODOO_PASS")
-    print(f"[ODOO CRM] Lead ready: {lead['email']} — {lead['industry']}")
+    """Push lead to Odoo CRM via XML-RPC."""
+    if not ODOO_USERNAME or not ODOO_PASSWORD:
+        print("[ODOO] Not configured — skipping CRM push")
+        return
+
+    uid = get_odoo_uid()
+    if not uid:
+        return
+
+    try:
+        models = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/object")
+
+        # Prepare lead data
+        industry = lead.get("industry", "")
+        processes = ", ".join(lead.get("processes", []))
+        email = lead.get("email", "")
+
+        lead_data = {
+            "name": f"Lead Web — {industry}",
+            "contact_name": email.split("@")[0] if "@" in email else "",
+            "email_from": email if "@" in email else "",
+            "description": (
+                f"<p><b>Lead generado desde NovaLink Assistant</b></p>"
+                f"<p><b>Industria:</b> {industry}</p>"
+                f"<p><b>Procesos a optimizar:</b> {processes}</p>"
+                f"<p><b>Tamaño de empresa:</b> {lead.get('company_size', '')}</p>"
+                f"<p><b>Email:</b> {email}</p>"
+            ),
+            "type": "lead",
+            "priority": "2",  # High
+            "team_id": ODOO_TEAM_ID,
+            "referred": "NovaLink Web Chatbot",
+        }
+
+        lead_id = models.execute_kw(
+            ODOO_DB, uid, ODOO_PASSWORD,
+            "crm.lead", "create", [lead_data],
+        )
+        print(f"[ODOO] Lead creado — ID: {lead_id} — {industry} — {email}")
+
+    except Exception as e:
+        print(f"[ODOO] Error al crear lead: {e}")
 
 
 # ── LLM Integration ──────────────────────────────────────────────────

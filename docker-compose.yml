@@ -20,6 +20,11 @@ services:
       - .env
     environment:
       - LEADS_FILE=/data/leads.json
+      - ODOO_URL=${ODOO_URL}
+      - ODOO_DB=${ODOO_DB}
+      - ODOO_USERNAME=${ODOO_USERNAME}
+      - ODOO_PASSWORD=${ODOO_PASSWORD}
+      - ODOO_TEAM_ID=${ODOO_TEAM_ID}
     volumes:
       - novalink_data:/data
 
