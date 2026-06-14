@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Interactivo — NovaLink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F8F9FA;
+  --bg-dark: #000000;
+  --bg-card: #FFFFFF;
+  --accent: #20E070;
+  --accent-hover: #1cc060;
+  --accent-glow: rgba(32,224,112,0.18);
+  --text: #1A1A2E;
+  --text-muted: #6B7280;
+  --text-light: #9CA3AF;
+  --border: #E5E7EB;
+  --border-light: #F3F4F6;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.07);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.10);
+  --max-width: 1200px;
+  --section-gap: clamp(48px, 8vw, 100px);
+  --nav-h: 68px;
+  --font-heading: 'Poppins', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:system-ui,-apple-system,sans-serif;color:var(--text);background:var(--bg);line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--font-heading);line-height:1.2}
+h2{font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;letter-spacing:-0.02em}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+.section{padding:var(--section-gap) 0}
+.section-label{display:inline-block;font-family:var(--font-heading);font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem}
+.section-header{text-align:center;margin-bottom:clamp(32px,5vw,56px)}
+.section-header h2{margin-bottom:0.75rem}
+.section-header p{color:var(--text-muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:var(--radius-sm);font-weight:600;font-size:0.95rem;transition:all 0.25s}
+.btn-primary{background:var(--accent);color:#000;box-shadow:0 4px 16px rgba(32,224,112,0.25)}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 28px rgba(32,224,112,0.35)}
+.btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.25)}
+.btn-outline:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.45)}
+.btn-ghost{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);padding:12px 24px;border-radius:var(--radius-sm);font-weight:500;font-size:0.9rem;transition:all 0.25s}
+.btn-ghost:hover{background:rgba(255,255,255,0.12);color:#fff}
+.btn:disabled,.btn-primary:disabled{opacity:0.5;pointer-events:none;transform:none;box-shadow:none}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);background:rgba(0,0,0,0.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.08);transition:box-shadow 0.3s}
+nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.3)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%}
+.nav-logo{font-family:var(--font-heading);font-size:1.35rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.nav-logo img{height:36px;width:auto}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+.nav-links a{font-size:0.9rem;font-weight:500;color:rgba(255,255,255,0.7);transition:color 0.2s;position:relative}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-cta{background:var(--accent);color:#000!important;padding:9px 20px;border-radius:var(--radius-sm);font-weight:600!important;transition:background 0.2s,transform 0.15s}
+.nav-cta:hover{background:var(--accent-hover);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:8px;z-index:101}
+.hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:0.3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+@media(max-width:840px){
+  .nav-links{position:fixed;top:0;right:-100%;width:280px;height:100vh;flex-direction:column;background:#000;padding:100px 32px 32px;gap:24px;box-shadow:-8px 0 32px rgba(0,0,0,0.4);transition:right 0.35s cubic-bezier(0.4,0,0.2,1);align-items:flex-start}
+  .nav-links.open{right:0}
+  .hamburger{display:flex}
+}
+
+/* DEMO HERO */
+.demo-hero{background:var(--bg-dark);padding:calc(var(--nav-h) + clamp(48px,8vw,80px)) 0 clamp(40px,6vw,64px);text-align:center}
+.demo-hero h1{font-family:var(--font-heading);font-size:clamp(2rem,5vw,3.2rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.15;max-width:720px;margin:0 auto 0.5rem}
+.demo-hero .hero-sub{color:rgba(255,255,255,0.55);font-size:1.1rem;max-width:520px;margin:0 auto clamp(32px,5vw,48px)}
+
+/* DEMO TABS */
+.demo-tabs{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;max-width:700px;margin:0 auto}
+.demo-tab{display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:99px;font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);transition:all 0.25s}
+.demo-tab:hover{color:#fff;background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.18)}
+.demo-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.demo-tab img{width:20px;height:20px;opacity:0.7;transition:opacity 0.25s}
+.demo-tab.active img,.demo-tab:hover img{opacity:1}
+.demo-tab.active img{filter:brightness(0)}
+
+/* DEMO MAIN — 2-COL LAYOUT */
+.demo-main{background:var(--bg-dark);padding:0 0 clamp(48px,8vw,80px)}
+.demo-grid{display:grid;grid-template-columns:380px 1fr;gap:clamp(24px,4vw,40px);align-items:start;min-height:500px}
+
+/* INPUT PANEL */
+.input-panel{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-lg);padding:clamp(24px,3vw,32px)}
+.input-panel-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.input-panel-header img{width:36px;height:36px}
+.input-panel-header h3{font-family:var(--font-heading);font-size:1.1rem;font-weight:700;color:#fff}
+.demo-textarea{width:100%;min-height:90px;padding:14px 16px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:#fff;font-size:0.9rem;resize:vertical;outline:none;font-family:inherit;transition:border-color 0.25s}
+.demo-textarea:focus{border-color:var(--accent)}
+.demo-textarea::placeholder{color:rgba(255,255,255,0.25)}
+.example-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.example-chip{padding:8px 16px;border-radius:99px;font-size:0.78rem;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s}
+.example-chip:hover{color:#fff;background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.18)}
+.btn-execute{width:100%;margin-top:16px;padding:15px;border-radius:var(--radius);background:var(--accent);color:#000;font-weight:700;font-size:1rem;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.25s;letter-spacing:-0.01em}
+.btn-execute:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 8px 32px rgba(32,224,112,0.35)}
+.btn-execute img{width:20px;height:20px;filter:brightness(0)}
+.btn-execute .spinner{display:none;width:20px;height:20px;border:2.5px solid rgba(0,0,0,0.2);border-top-color:#000;border-radius:50%;animation:spin 0.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-execute.running .spinner{display:block}
+.btn-execute.running .btn-execute-icon,.btn-execute.running .btn-execute-text{display:none}
+.btn-execute.done{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);pointer-events:none}
+
+/* FLOW PANEL */
+.flow-panel{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-lg);padding:clamp(24px,3vw,32px)}
+.flow-panel h3{font-family:var(--font-heading);font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px}
+.steps-list{display:flex;flex-direction:column;gap:0}
+.step{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:14px;padding:12px 14px;border-radius:var(--radius-sm);transition:background 0.25s;position:relative}
+.step+.step{border-top:1px solid rgba(255,255,255,0.04)}
+.step-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-icon img{width:22px;height:22px;opacity:0.5;transition:opacity 0.3s}
+.step-content{min-width:0}
+.step-title{font-family:var(--font-heading);font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.3);transition:color 0.3s;line-height:1.3}
+.step-desc{font-size:0.78rem;color:rgba(255,255,255,0.18);transition:color 0.3s;margin-top:2px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.step-status{display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.step-dot img{width:16px;height:16px}
+
+/* Step states */
+.step.pending .step-dot{border:2px solid rgba(255,255,255,0.15);background:transparent}
+.step.processing .step-icon{background:rgba(250,204,21,0.12)}
+.step.processing .step-dot{background:rgba(250,204,21,0.15);border:2px solid #FACC15}
+.step.processing .step-title{color:rgba(255,255,255,0.7)}
+.step.processing .step-desc{color:rgba(255,255,255,0.35)}
+.step.processing .step-icon img{opacity:0.9}
+.step.processing .step-dot::after{content:'';width:12px;height:12px;border-radius:50%;background:#FACC15;animation:pulse-dot 0.8s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:0.4}}
+.step.completed .step-icon{background:rgba(32,224,112,0.1)}
+.step.completed .step-dot{background:var(--accent);border:2px solid var(--accent)}
+.step.completed .step-title{color:#fff}
+.step.completed .step-desc{color:rgba(255,255,255,0.4)}
+.step.completed .step-icon img{opacity:1;filter:brightness(0) saturate(100%) invert(75%) sepia(54%) saturate(1134%) hue-rotate(86deg) brightness(95%) contrast(89%)}
+.step.error .step-icon{background:rgba(239,68,68,0.1)}
+.step.error .step-dot{background:#EF4444;border:2px solid #EF4444}
+.step.error .step-title{color:#EF4444}
+.step.error .step-desc{color:rgba(239,68,68,0.5)}
+
+/* Connectors */
+.step-connector-wrap{height:24px;display:flex;align-items:center;padding-left:34px;position:relative}
+.step-connector{width:2px;height:100%;background:rgba(255,255,255,0.06);border-radius:1px;transition:background 0.5s}
+.step-connector.active{background:var(--accent)}
+
+/* RESULT CARD */
+.result-section{display:none;background:var(--bg-dark);padding:0 0 clamp(48px,8vw,80px)}
+.result-section.visible{display:block;animation:fadeInUp 0.5s ease-out}
+.result-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-lg);padding:clamp(28px,4vw,40px);max-width:700px;margin:0 auto;text-align:center}
+.result-card h2{color:#fff;font-size:clamp(1.4rem,3vw,2rem);margin-bottom:4px}
+.result-card .result-sub{color:rgba(255,255,255,0.45);font-size:0.95rem;margin-bottom:24px}
+.result-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.result-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:16px 20px;text-align:left}
+.result-stat .stat-label{font-size:0.72rem;font-weight:600;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
+.result-stat .stat-value{font-family:var(--font-mono);font-size:1.3rem;font-weight:700;color:var(--accent)}
+.result-stat .stat-sub{font-size:0.78rem;color:rgba(255,255,255,0.35);margin-top:2px}
+.result-data{margin-bottom:24px;text-align:left}
+.result-data-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);margin-bottom:6px}
+.result-data-item img{width:20px;height:20px;flex-shrink:0}
+.result-data-item span{font-size:0.85rem;color:rgba(255,255,255,0.6)}
+.result-data-item span b{color:#fff;font-weight:600}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* CONFETTI */
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:300;overflow:hidden}
+.confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;animation:confetti-fall 2.5s ease-out forwards}
+@keyframes confetti-fall{0%{transform:translateY(0) rotate(0deg) scale(1);opacity:1}100%{transform:translateY(100vh) rotate(720deg) scale(0.3);opacity:0}}
+
+/* FOOTER */
+footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);padding:clamp(40px,6vw,64px) 0 28px;color:#fff}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:clamp(24px,4vw,40px);margin-bottom:36px}
+.footer-brand p{color:rgba(255,255,255,0.4);font-size:0.88rem;line-height:1.6;margin-top:14px;max-width:320px}
+.footer-logo-img{height:32px;width:auto}
+.footer-col h4{color:#fff;font-size:0.85rem;font-weight:600;margin-bottom:14px;text-transform:uppercase;letter-spacing:0.05em}
+.footer-link-btn{display:block;color:rgba(255,255,255,0.45);font-size:0.88rem;padding:3px 0;transition:color 0.2s;text-align:left}
+.footer-link-btn:hover{color:#fff}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);font-size:0.8rem;flex-wrap:wrap;gap:8px}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr}}
+
+/* CHATBOT */
+.chatbot{position:fixed;bottom:20px;right:20px;z-index:200}
+.chatbot-toggle{width:56px;height:56px;border-radius:50%;background:var(--accent);color:#000;box-shadow:0 4px 24px rgba(32,224,112,0.4);transition:transform 0.2s,box-shadow 0.2s;display:flex;align-items:center;justify-content:center}
+.chatbot-toggle:hover{transform:scale(1.06);box-shadow:0 6px 32px rgba(32,224,112,0.5)}
+.chatbot-window{display:none;position:absolute;bottom:72px;right:0;width:360px;max-width:calc(100vw - 40px);background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,0.5)}
+.chatbot.open .chatbot-window{display:block}
+.chatbot-header{background:rgba(255,255,255,0.05);padding:14px 18px;font-size:0.85rem;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.cb-status{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:dotPulse 2s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.chatbot-body{padding:16px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;background:#0a0a0a}
+.cb-msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:0.85rem;line-height:1.5;animation:fadeInUp 0.3s ease-out}
+.cb-msg.bot{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8);align-self:flex-start;border-bottom-left-radius:4px}
+.cb-msg.user{background:var(--accent);color:#000;align-self:flex-end;border-bottom-right-radius:4px;font-weight:500}
+.chatbot-suggestions{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.cb-sugg{font-size:0.75rem;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.65);transition:background 0.2s,color 0.2s}
+.cb-sugg:hover{background:rgba(255,255,255,0.14);color:#fff}
+.chatbot-input-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid rgba(255,255,255,0.06)}
+.chatbot-input{flex:1;padding:10px 14px;border-radius:99px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#fff;font-size:0.82rem;outline:none;transition:border-color 0.2s}
+.chatbot-input:focus{border-color:var(--accent)}
+.chatbot-input::placeholder{color:rgba(255,255,255,0.3)}
+.chatbot-send{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s}
+.chatbot-send:hover{background:var(--accent-hover)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .demo-grid{grid-template-columns:1fr}
+  .flow-panel{order:1}
+  .input-panel{order:2}
+  .result-stats{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="assets/images/nova-link-logotipo.png" alt="NovaLink">
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="demo.html" class="active" onclick="closeNav()">Demo</a></li>
+      <li><a href="index.html#industrias" onclick="closeNav()">Industrias</a></li>
+      <li><a href="index.html#testimonios" onclick="closeNav()">Casos de Exito</a></li>
+      <li><a href="index.html#faq" onclick="closeNav()">FAQ</a></li>
+      <li><a href="sobre-nosotros.html" onclick="closeNav()">Sobre Nosotros</a></li>
+      <li><a href="contacto.html" onclick="closeNav()">Contacto</a></li>
+      <li><a href="javascript:void(0)" class="nav-cta" onclick="toggleChatbot();closeNav()">Prueba el Demo</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- DEMO HERO -->
+<section class="demo-hero">
+  <div class="container">
+    <h1>Mira como automatizamos tu negocio en vivo</h1>
+    <p class="hero-sub">Selecciona un tipo de automatizacion y observa como NovaLink ejecuta cada paso en tiempo real. Sin humo, sin trucos.</p>
+    <div class="demo-tabs" id="demoTabs">
+      <button class="demo-tab active" data-demo="whatsapp-ia"><img src="assets/icons/chat.svg" width="20" height="20" alt="">WhatsApp IA</button>
+      <button class="demo-tab" data-demo="documentos"><img src="assets/icons/document.svg" width="20" height="20" alt="">Documentos</button>
+      <button class="demo-tab" data-demo="agenda"><img src="assets/icons/calendar.svg" width="20" height="20" alt="">Agenda</button>
+      <button class="demo-tab" data-demo="email-crm"><img src="assets/icons/crm.svg" width="20" height="20" alt="">Email + CRM</button>
+      <button class="demo-tab" data-demo="propuestas"><img src="assets/icons/clipboard.svg" width="20" height="20" alt="">Propuestas</button>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO MAIN -->
+<section class="demo-main" id="demoMain">
+  <div class="container">
+    <div class="demo-grid">
+      <!-- INPUT PANEL -->
+      <div class="input-panel" id="inputPanel">
+        <div class="input-panel-header">
+          <img id="demoIcon" src="assets/icons/chat.svg" alt="">
+          <h3 id="demoName">WhatsApp IA</h3>
+        </div>
+        <textarea class="demo-textarea" id="demoInput" placeholder="Escribe un mensaje de cliente..."></textarea>
+        <div class="example-chips" id="exampleChips">
+          <button class="example-chip" onclick="selectExample('Quiero una cotizacion')">Quiero una cotizacion</button>
+          <button class="example-chip" onclick="selectExample('Cual es el precio?')">Cual es el precio?</button>
+          <button class="example-chip" onclick="selectExample('Necesito soporte tecnico')">Necesito soporte tecnico</button>
+        </div>
+        <button class="btn-execute" id="btnExecute" onclick="handleExecute()">
+          <span class="btn-execute-icon"><img src="assets/icons/send.svg" width="20" height="20" alt=""></span>
+          <span class="btn-execute-text">Ejecutar Demo</span>
+          <span class="spinner" id="execSpinner"></span>
+        </button>
+      </div>
+
+      <!-- FLOW PANEL -->
+      <div class="flow-panel" id="flowPanel">
+        <h3>Flujo de automatizacion</h3>
+        <div class="steps-list" id="stepsList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULT SECTION -->
+<section class="result-section" id="resultSection">
+  <div class="container">
+    <div class="result-card" id="resultCard"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="assets/images/nova-link-logotipo.png" alt="NovaLink" class="footer-logo-img">
+        <p>Automatizacion inteligente para empresas que quieren dejar atras los procesos manuales. IoT, datos y cloud trabajando para ti.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <a href="demo.html" class="footer-link-btn" style="color:var(--accent)">Demo</a>
+        <a href="index.html#industrias" class="footer-link-btn">Industrias</a>
+        <a href="index.html#faq" class="footer-link-btn">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <a href="sobre-nosotros.html" class="footer-link-btn">Sobre Nosotros</a>
+        <a href="sobre-nosotros.html" class="footer-link-btn">Blog</a>
+        <a href="contacto.html" class="footer-link-btn">Contacto</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="sobre-nosotros.html" class="footer-link-btn">Privacidad</a>
+        <a href="sobre-nosotros.html" class="footer-link-btn">Terminos</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 NovaLink. Todos los derechos reservados.</span>
+      <span style="color:var(--accent);font-family:var(--font-mono);font-size:0.75rem">v2.1 &mdash; Black y Green</span>
+    </div>
+  </div>
+</footer>
+
+<!-- CHATBOT -->
+<div class="chatbot" id="chatbot">
+  <button class="chatbot-toggle" onclick="toggleChatbot()" aria-label="Abrir chat"><img src="assets/icons/chat.svg" width="24" height="24" alt="Chat"></button>
+  <div class="chatbot-window">
+    <div class="chatbot-header">
+      <span class="cb-status"></span>
+      NovaLink Assistant &mdash; En linea
+    </div>
+    <div class="chatbot-body" id="chatBody"></div>
+    <div class="chatbot-suggestions" id="chatSuggestions"></div>
+    <div class="chatbot-input-row">
+      <input type="text" class="chatbot-input" id="chatInput" placeholder="Escribe tu mensaje..." onkeypress="if(event.key==='Enter')sendMessage()">
+      <button class="chatbot-send" onclick="sendMessage()"><img src="assets/icons/send.svg" width="18" height="18" alt="Enviar"></button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFETTI CONTAINER -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+// ── NAV ──
+function toggleNav(){document.getElementById('navLinks').classList.toggle('open');document.getElementById('hamburger').classList.toggle('open')}
+function closeNav(){document.getElementById('navLinks').classList.remove('open');document.getElementById('hamburger').classList.remove('open')}
+window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>20)})
+</script>
+
+<script>
+// ── CHATBOT ──
+var chatSessionId=null,chatStep=0;
+function toggleChatbot(){var c=document.getElementById('chatbot');c.classList.toggle('open');if(c.classList.contains('open')){document.getElementById('chatBody').scrollTop=document.getElementById('chatBody').scrollHeight;if(chatStep===0&&chatSessionId===null)sendChatMessage('__init__')}}
+function appendBotMsg(h){var b=document.getElementById('chatBody'),m=document.createElement('div');m.className='cb-msg bot';m.innerHTML=h.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');b.appendChild(m);b.scrollTop=b.scrollHeight}
+function appendUserMsg(t){var b=document.getElementById('chatBody'),m=document.createElement('div');m.className='cb-msg user';m.textContent=t;b.appendChild(m);b.scrollTop=b.scrollHeight}
+function showTyping(){var b=document.getElementById('chatBody'),t=document.createElement('div');t.className='cb-msg bot';t.id='typingIndicator';t.textContent='...';b.appendChild(t);b.scrollTop=b.scrollHeight}
+function hideTyping(){var e=document.getElementById('typingIndicator');if(e)e.remove()}
+function sendMessage(){var i=document.getElementById('chatInput'),m=i.value.trim();if(!m)return;i.value='';sendChatMessage(m)}
+async function sendChatMessage(m){appendUserMsg(m);showTyping();try{var p={message:m,session_id:chatSessionId,step:chatStep},r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});if(!r.ok)throw new Error('API error: '+r.status);var d=await r.json();hideTyping();chatSessionId=d.session_id;chatStep=d.step;appendBotMsg(d.bot_message);updateSuggestions(d.suggestions)}catch(e){hideTyping();appendBotMsg('Lo siento, hubo un error de conexion. Puedes intentar de nuevo?');console.error('Chat API error:',e)}}
+function updateSuggestions(i){var c=document.getElementById('chatSuggestions');if(!i||i.length===0){c.innerHTML='';return}c.innerHTML=i.map(function(t){return'<button class="cb-sugg" onclick="sendChatMessage(\''+t.replace(/'/g,"\\'")+'\')">'+t+'</button>'}).join('')}
+</script>
+
+<script>
+// ── DEMO STATE MACHINE ──
+
+// Service icon map
+var svcIcons={
+  whatsapp:'assets/icons/chat.svg',
+  openai:'assets/icons/lightning.svg',
+  ia:'assets/icons/lightning.svg',
+  hubspot:'assets/icons/crm.svg',
+  crm:'assets/icons/crm.svg',
+  slack:'assets/icons/notifications.svg',
+  drive:'assets/icons/cloud.svg',
+  ocr:'assets/icons/search.svg',
+  erp:'assets/icons/erp.svg',
+  email:'assets/icons/email.svg',
+  web:'assets/icons/globe.svg',
+  calendar:'assets/icons/calendar.svg',
+  pdf:'assets/icons/document.svg',
+  propuesta:'assets/icons/clipboard.svg',
+  formato:'assets/icons/document.svg'
+};
+
+// Demo definitions
+var demos={
+  'whatsapp-ia':{
+    nombre:'WhatsApp IA',
+    icono:'assets/icons/chat.svg',
+    inputPlaceholder:'Escribe un mensaje de cliente...',
+    ejemplos:['Quiero una cotizacion','Cual es el precio?','Necesito soporte tecnico'],
+    pasos:[
+      {id:1,titulo:'Mensaje recibido',desc:'El webhook de WhatsApp captura el mensaje entrante',servicio:'whatsapp',duracion:600},
+      {id:2,titulo:'Analizando con IA',desc:'OpenAI procesa el contenido y clasifica la intencion',servicio:'openai',duracion:1200},
+      {id:3,titulo:'Intencion detectada: Ventas',desc:'El modelo clasifica la conversacion como oportunidad comercial',servicio:'ia',duracion:800},
+      {id:4,titulo:'Creando lead en CRM',desc:'HubSpot recibe los datos y crea un nuevo contacto',servicio:'hubspot',duracion:1000},
+      {id:5,titulo:'Asignando vendedor',desc:'El CRM asigna automaticamente al representante disponible',servicio:'crm',duracion:700},
+      {id:6,titulo:'Enviando respuesta',desc:'WhatsApp envia mensaje automatico de confirmacion al cliente',servicio:'whatsapp',duracion:900},
+      {id:7,titulo:'Notificando al equipo',desc:'Slack recibe una alerta con el resumen del nuevo lead',servicio:'slack',duracion:600}
+    ]
+  },
+  'documentos':{
+    nombre:'Documentos',
+    icono:'assets/icons/document.svg',
+    inputPlaceholder:'Describe el tipo de documento a procesar...',
+    ejemplos:['Factura de proveedor en PDF','Contrato escaneado en JPG','Recibo fiscal en PNG'],
+    pasos:[
+      {id:1,titulo:'Documento recibido',desc:'El sistema captura el archivo desde Google Drive',servicio:'drive',duracion:500},
+      {id:2,titulo:'Extrayendo datos con OCR',desc:'IA de vision procesa el documento y extrae campos clave',servicio:'ocr',duracion:1500},
+      {id:3,titulo:'Validando informacion',desc:'Se verifican formatos, totales y datos fiscales',servicio:'ia',duracion:900},
+      {id:4,titulo:'Clasificando documento',desc:'El sistema categoriza: factura, contrato, recibo, etc.',servicio:'ia',duracion:700},
+      {id:5,titulo:'Creando registro en ERP',desc:'Los datos se integran al sistema contable de la empresa',servicio:'erp',duracion:1000},
+      {id:6,titulo:'Archivando en Drive',desc:'El documento procesado se guarda con metadata en la nube',servicio:'drive',duracion:600},
+      {id:7,titulo:'Notificando al responsable',desc:'Email automatico al encargado con resumen del procesamiento',servicio:'email',duracion:500}
+    ]
+  },
+  'agenda':{
+    nombre:'Agenda',
+    icono:'assets/icons/calendar.svg',
+    inputPlaceholder:'Describe que tipo de cita necesitas agendar...',
+    ejemplos:['Agendar reunion con prospecto','Programar demo para manana','Coordinar llamada de seguimiento'],
+    pasos:[
+      {id:1,titulo:'Solicitud recibida',desc:'El formulario web captura los datos de la solicitud',servicio:'web',duracion:400},
+      {id:2,titulo:'Verificando disponibilidad',desc:'Se consulta Google Calendar del equipo de ventas',servicio:'calendar',duracion:1000},
+      {id:3,titulo:'Seleccionando horario',desc:'IA elige el mejor slot basado en prioridad y zona horaria',servicio:'ia',duracion:800},
+      {id:4,titulo:'Creando evento',desc:'Se crea la invitacion en Google Calendar con videollamada',servicio:'calendar',duracion:700},
+      {id:5,titulo:'Enviando confirmacion',desc:'Email al prospecto con los datos de la reunion',servicio:'email',duracion:600},
+      {id:6,titulo:'Programando recordatorio',desc:'WhatsApp envia recordatorio 1 hora antes de la cita',servicio:'whatsapp',duracion:500}
+    ]
+  },
+  'email-crm':{
+    nombre:'Email + CRM',
+    icono:'assets/icons/crm.svg',
+    inputPlaceholder:'Escribe el contenido del email entrante...',
+    ejemplos:['Cotizacion urgente de cliente VIP','Consulta de nuevo prospecto por LinkedIn','Reclamo de cliente insatisfecho'],
+    pasos:[
+      {id:1,titulo:'Email recibido',desc:'El sistema monitorea la bandeja de entrada via IMAP',servicio:'email',duracion:500},
+      {id:2,titulo:'Extrayendo datos',desc:'Se parsean remitente, asunto, cuerpo y adjuntos',servicio:'ia',duracion:900},
+      {id:3,titulo:'Analizando sentimiento',desc:'IA clasifica el tono: positivo, neutro o urgente',servicio:'openai',duracion:1100},
+      {id:4,titulo:'Creando ticket en CRM',desc:'HubSpot genera un ticket con prioridad segun el analisis',servicio:'hubspot',duracion:800},
+      {id:5,titulo:'Asignando agente',desc:'El ticket se asigna al representante especializado',servicio:'crm',duracion:600},
+      {id:6,titulo:'Redactando respuesta',desc:'IA genera un borrador de respuesta personalizada',servicio:'openai',duracion:1200},
+      {id:7,titulo:'Enviando y registrando',desc:'Respuesta enviada y actividad registrada en el timeline del CRM',servicio:'email',duracion:700}
+    ]
+  },
+  'propuestas':{
+    nombre:'Propuestas',
+    icono:'assets/icons/clipboard.svg',
+    inputPlaceholder:'Describe el servicio que necesita el cliente...',
+    ejemplos:['Automatizar area de ventas completa','Integrar IoT en 3 sucursales','Migrar reportes de Excel a dashboard'],
+    pasos:[
+      {id:1,titulo:'Solicitud recibida',desc:'El cliente envia sus requerimientos via formulario web',servicio:'web',duracion:400},
+      {id:2,titulo:'Analizando requerimientos',desc:'IA desglosa necesidades, alcance y complejidad',servicio:'ia',duracion:1000},
+      {id:3,titulo:'Seleccionando modulos',desc:'El sistema mapea los modulos NovaLink requeridos',servicio:'ia',duracion:900},
+      {id:4,titulo:'Calculando pricing',desc:'Se genera estimacion de tiempo e inversion',servicio:'erp',duracion:700},
+      {id:5,titulo:'Adjuntando casos de exito',desc:'Se incluyen resultados de clientes similares',servicio:'propuesta',duracion:800},
+      {id:6,titulo:'Generando PDF profesional',desc:'La propuesta se formatea con branding NovaLink',servicio:'pdf',duracion:900},
+      {id:7,titulo:'Enviando al cliente',desc:'Email con PDF adjunto y enlace de agendamiento',servicio:'email',duracion:600}
+    ]
+  }
+};
+
+var state={
+  demoActivo:'whatsapp-ia',
+  fase:'idle',
+  pasoActual:0,
+  mensajeUsuario:'',
+  timeouts:[]
+};
+
+var demo=freshDemo('whatsapp-ia');
+
+function freshDemo(id){
+  var src=demos[id];
+  return {
+    id:id,
+    nombre:src.nombre,
+    icono:src.icono,
+    inputPlaceholder:src.inputPlaceholder,
+    ejemplos:src.ejemplos.slice(),
+    pasos:src.pasos.map(function(s){return Object.assign({},s,{estado:'pending'})}),
+    resultado:null
+  };
+}
+
+// ── TAB SWITCHING ──
+document.getElementById('demoTabs').addEventListener('click',function(e){
+  var tab=e.target.closest('.demo-tab');
+  if(!tab)return;
+  cancelarDemo();
+  var id=tab.dataset.demo;
+  state.demoActivo=id;
+  demo=freshDemo(id);
+  state.fase='idle';
+  document.querySelectorAll('.demo-tab').forEach(function(t){t.classList.remove('active')});
+  tab.classList.add('active');
+  document.getElementById('demoIcon').src=demo.icono;
+  document.getElementById('demoName').textContent=demo.nombre;
+  document.getElementById('demoInput').placeholder=demo.inputPlaceholder;
+  document.getElementById('demoInput').value='';
+  var chips=document.getElementById('exampleChips');
+  chips.innerHTML=demo.ejemplos.map(function(e){return'<button class="example-chip" onclick="selectExample(\''+e.replace(/'/g,"\\'")+'\')">'+e+'</button>'}).join('');
+  renderSteps();
+  hideResult();
+  resetExecuteButton();
+});
+
+// ── EXAMPLE CHIP SELECTION ──
+function selectExample(text){
+  document.getElementById('demoInput').value=text;
+}
+
+// ── EXECUTE ──
+function handleExecute(){
+  if(state.fase==='corriendo')return;
+  var msg=document.getElementById('demoInput').value.trim();
+  if(!msg){
+    alert('Por favor escribe un mensaje o selecciona un ejemplo para ejecutar el demo.');
+    return;
+  }
+  state.mensajeUsuario=msg;
+  ejecutarDemo();
+}
+
+async function ejecutarDemo(){
+  state.fase='corriendo';
+  state.pasoActual=0;
+  demo.pasos.forEach(function(p){p.estado='pending'});
+  hideResult();
+  renderSteps();
+
+  var btn=document.getElementById('btnExecute');
+  btn.classList.add('running');
+
+  for(var i=0;i<demo.pasos.length;i++){
+    if(state.fase!=='corriendo')break;
+    state.pasoActual=i;
+    await ejecutarPaso(demo.pasos[i],i);
+  }
+
+  btn.classList.remove('running');
+  btn.classList.add('done');
+
+  if(state.fase==='corriendo'){
+    state.fase='completado';
+    spawnConfetti();
+    mostrarResultado();
+  }
+}
+
+function ejecutarPaso(paso,idx){
+  return new Promise(function(resolve){
+    paso.estado='processing';
+    updateStepDOM(paso,idx);
+
+    var tid=setTimeout(function(){
+      if(state.fase!=='corriendo'){resolve();return}
+      paso.estado='completed';
+      updateStepDOM(paso,idx);
+      // animate connector after this step
+      var conn=document.getElementById('conn-'+idx);
+      if(conn)conn.classList.add('active');
+      resolve();
+    },paso.duracion);
+
+    state.timeouts.push(tid);
+  });
+}
+
+function updateStepDOM(paso,idx){
+  var el=document.getElementById('step-'+paso.id);
+  if(!el)return;
+  el.className='step '+paso.estado;
+
+  var dot=el.querySelector('.step-dot');
+  if(paso.estado==='pending'){
+    dot.innerHTML='';
+  }else if(paso.estado==='processing'){
+    dot.innerHTML='';
+  }else if(paso.estado==='completed'){
+    dot.innerHTML='<img src="assets/icons/check.svg" width="16" height="16" alt="" style="opacity:1;filter:brightness(0)">';
+  }else if(paso.estado==='error'){
+    dot.innerHTML='<img src="assets/icons/cross.svg" width="12" height="12" alt="">';
+  }
+}
+
+function cancelarDemo(){
+  state.timeouts.forEach(function(id){clearTimeout(id)});
+  state.timeouts=[];
+  state.fase='idle';
+  state.pasoActual=0;
+  demo.pasos.forEach(function(p){p.estado='pending'});
+  renderSteps();
+  document.querySelectorAll('.step-connector').forEach(function(c){c.classList.remove('active')});
+  resetExecuteButton();
+}
+
+function resetExecuteButton(){
+  var btn=document.getElementById('btnExecute');
+  btn.classList.remove('running','done');
+}
+
+// ── RENDER STEPS ──
+function renderSteps(){
+  var cont=document.getElementById('stepsList');
+  var html='';
+  for(var i=0;i<demo.pasos.length;i++){
+    var p=demo.pasos[i];
+    var icon=svcIcons[p.servicio]||'assets/icons/lightning.svg';
+    html+='<div class="step pending" id="step-'+p.id+'">'+
+      '<div class="step-icon"><img src="'+icon+'" width="22" height="22" alt=""></div>'+
+      '<div class="step-content"><div class="step-title">'+p.titulo+'</div><div class="step-desc">'+p.desc+'</div></div>'+
+      '<div class="step-status"><div class="step-dot"></div></div>'+
+      '</div>';
+    if(i<demo.pasos.length-1){
+      html+='<div class="step-connector-wrap"><div class="step-connector" id="conn-'+i+'"></div></div>';
+    }
+  }
+  cont.innerHTML=html;
+}
+
+// ── RESULT ──
+function mostrarResultado(){
+  var d=demo;
+  var msg=state.mensajeUsuario;
+  var res=generarResultado(msg);
+  d.resultado=res;
+
+  var items=res.datos.map(function(dd){
+    return'<div class="result-data-item"><img src="assets/icons/check-mark.svg" width="20" height="20" alt=""><span>'+dd.etiqueta+': <b>'+dd.valor+'</b></span></div>';
+  }).join('');
+
+  var html='<h2>Automatizacion completada</h2>'+
+    '<p class="result-sub">Asi de rapido trabaja NovaLink por ti.</p>'+
+    '<div class="result-stats">'+
+      '<div class="result-stat">'+
+        '<div class="stat-label">⏱ Tiempo NovaLink</div>'+
+        '<div class="stat-value">'+res.tiempoTotal+'</div>'+
+        '<div class="stat-sub">Automatizado de inicio a fin</div>'+
+      '</div>'+
+      '<div class="result-stat">'+
+        '<div class="stat-label">⏱ Sin automatizacion</div>'+
+        '<div class="stat-value">'+res.tiempoManual+'</div>'+
+        '<div class="stat-sub">Proceso manual tradicional</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="result-data">'+items+'</div>'+
+    '<div class="result-actions">'+
+      '<a href="contacto.html" class="btn btn-primary">Quiero esto para mi empresa</a>'+
+      '<button class="btn btn-ghost" onclick="reiniciarDemo()">Probar otro demo</button>'+
+    '</div>';
+
+  document.getElementById('resultCard').innerHTML=html;
+  var section=document.getElementById('resultSection');
+  section.classList.add('visible');
+  section.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function hideResult(){
+  document.getElementById('resultSection').classList.remove('visible');
+}
+
+function reiniciarDemo(){
+  cancelarDemo();
+  hideResult();
+  document.getElementById('demoInput').value='';
+  renderSteps();
+  document.querySelectorAll('.step-connector').forEach(function(c){c.classList.remove('active')});
+}
+
+function generarResultado(msg){
+  var intencion=detectarIntencion(msg);
+  var nombres=['Carlos Mendez','Ana Garcia','Luis Torres','Maria Lopez','Diego Ramirez','Sofia Herrera'];
+  var nombre=nombres[Math.floor(Math.random()*nombres.length)];
+  return{
+    tiempoTotal:(Math.random()*1.5+1.2).toFixed(1)+' segundos',
+    tiempoManual:'~'+(Math.floor(Math.random()*20)+15)+' minutos',
+    datos:[
+      {etiqueta:'Lead creado',valor:nombre+' \u2014 Interes: '+intencion.nivel},
+      {etiqueta:'Categoria',valor:intencion.categoria},
+      {etiqueta:'Proxima accion',valor:intencion.accion}
+    ]
+  };
+}
+
+function detectarIntencion(msg){
+  var m=msg.toLowerCase();
+  if(m.includes('precio')||m.includes('cotizacion')||m.includes('costo'))return{nivel:'Alto',categoria:'Ventas',accion:'Enviar propuesta en 2h'};
+  if(m.includes('soporte')||m.includes('problema')||m.includes('ayuda')||m.includes('reclamo'))return{nivel:'Urgente',categoria:'Soporte',accion:'Crear ticket prioritario'};
+  if(m.includes('informacion')||m.includes('saber')||m.includes('consulta'))return{nivel:'Medio',categoria:'Prospecto',accion:'Enviar brochure + seguimiento'};
+  if(m.includes('demo')||m.includes('prueba')||m.includes('reunion'))return{nivel:'Alto',categoria:'Ventas',accion:'Agendar demo personalizada'};
+  return{nivel:'Medio',categoria:'General',accion:'Agendar llamada de descubrimiento'};
+}
+
+// ── CONFETTI ──
+function spawnConfetti(){
+  var container=document.getElementById('confettiContainer');
+  var colors=['#20E070','#fff','#FACC15','#6366F1','#EF4444'];
+  var frag=document.createDocumentFragment();
+  for(var i=0;i<60;i++){
+    var piece=document.createElement('div');
+    piece.className='confetti-piece';
+    piece.style.left=Math.random()*100+'%';
+    piece.style.top=-(Math.random()*20+10)+'px';
+    piece.style.background=colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDuration=(Math.random()*1.5+1.8)+'s';
+    piece.style.animationDelay=Math.random()*0.8+'s';
+    piece.style.width=(Math.random()*6+6)+'px';
+    piece.style.height=(Math.random()*6+6)+'px';
+    frag.appendChild(piece);
+  }
+  container.appendChild(frag);
+  setTimeout(function(){container.innerHTML=''},3000);
+}
+
+// ── INIT ──
+renderSteps();
+</script>
+
+</body>
+</html>

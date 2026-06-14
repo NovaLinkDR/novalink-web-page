@@ -180,14 +180,15 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.3)}
 
 /* INDUSTRY TABS */
 .tabs-nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:clamp(24px,4vw,36px)}
-.tab-btn{padding:10px 20px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:500;color:var(--text-muted);background:var(--border-light);transition:all 0.2s}
+.tab-btn{padding:10px 20px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:500;color:var(--text-muted);background:var(--border-light);transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
 .tab-btn.active{background:var(--accent);color:#000;font-weight:600}
+.tab-btn.active img{filter:brightness(0)}
 .tab-btn:not(.active):hover{background:var(--border)}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 .industry-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3vw,24px)}
 .industry-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:clamp(20px,3vw,28px)}
-.ind-icon{font-size:1.8rem;margin-bottom:12px}
+.ind-icon{width:32px;height:32px;margin-bottom:12px}
 .industry-card h4{font-size:1.05rem;font-weight:700;margin-bottom:8px}
 .ind-problem{font-size:0.9rem;color:var(--text-muted);line-height:1.5;margin-bottom:14px}
 .ind-metric{display:inline-block;font-family:var(--font-mono);font-size:0.8rem;font-weight:600;color:var(--accent);padding:5px 12px;background:rgba(32,224,112,0.08);border-radius:99px}
@@ -222,7 +223,7 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.3)}
 
 /* FAQ */
 .faq-search-wrap{position:relative;max-width:560px;margin:0 auto clamp(28px,4vw,36px)}
-.faq-search-wrap .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:0.9rem}
+.faq-search-wrap .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px}
 .faq-search-wrap input{width:100%;padding:14px 16px 14px 40px;font-size:0.95rem;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--bg-card);transition:border-color 0.2s}
 .faq-search-wrap input:focus{outline:none;border-color:var(--accent)}
 .faq-list{max-width:760px;margin:0 auto}
@@ -260,7 +261,7 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
 
 /* CHATBOT */
 .chatbot{position:fixed;bottom:20px;right:20px;z-index:200}
-.chatbot-toggle{width:56px;height:56px;border-radius:50%;background:var(--accent);color:#000;font-size:1.5rem;box-shadow:0 4px 24px rgba(32,224,112,0.4);transition:transform 0.2s,box-shadow 0.2s}
+.chatbot-toggle{width:56px;height:56px;border-radius:50%;background:var(--accent);color:#000;box-shadow:0 4px 24px rgba(32,224,112,0.4);transition:transform 0.2s,box-shadow 0.2s;display:flex;align-items:center;justify-content:center}
 .chatbot-toggle:hover{transform:scale(1.06);box-shadow:0 6px 32px rgba(32,224,112,0.5)}
 .chatbot-window{display:none;position:absolute;bottom:72px;right:0;width:360px;max-width:calc(100vw - 40px);background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,0.5)}
 .chatbot.open .chatbot-window{display:block}
@@ -277,7 +278,7 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
 .chatbot-input{flex:1;padding:10px 14px;border-radius:99px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#fff;font-size:0.82rem;outline:none;transition:border-color 0.2s}
 .chatbot-input:focus{border-color:var(--accent)}
 .chatbot-input::placeholder{color:rgba(255,255,255,0.3)}
-.chatbot-send{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#000;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s}
+.chatbot-send{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s}
 .chatbot-send:hover{background:var(--accent-hover)}
 </style>
 </head>
@@ -291,9 +292,12 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
     </a>
     <ul class="nav-links" id="navLinks">
       <li><a href="#demos" onclick="closeNav()">Demos</a></li>
+      <li><a href="demo.html" onclick="closeNav()">Demo</a></li>
       <li><a href="#industrias" onclick="closeNav()">Industrias</a></li>
       <li><a href="#testimonios" onclick="closeNav()">Casos de Éxito</a></li>
       <li><a href="#faq" onclick="closeNav()">FAQ</a></li>
+      <li><a href="sobre-nosotros.html" onclick="closeNav()">Sobre Nosotros</a></li>
+      <li><a href="contacto.html" onclick="closeNav()">Contacto</a></li>
       <li><a href="javascript:void(0)" class="nav-cta" onclick="toggleChatbot();closeNav()">Prueba el Demo</a></li>
     </ul>
     <button class="hamburger" id="hamburger" aria-label="Menú" onclick="toggleNav()">
@@ -400,8 +404,8 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
             <div class="ba-badge">ANTES — Manual</div>
             <div style="color:rgba(255,255,255,0.6);font-size:0.85rem;text-shadow:0 1px 4px rgba(0,0,0,0.6)">Hojas de cálculo, entrada manual, errores frecuentes</div>
             <div style="display:flex;gap:12px;margin-top:12px">
-              <span style="color:#ef4444;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)">✕ Errores de tipeo</span>
-              <span style="color:#ef4444;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)">✕ Datos duplicados</span>
+              <span style="color:#ef4444;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)"><img src="assets/icons/cross.svg" width="12" height="12" alt="" style="vertical-align:middle;margin-right:2px">Errores de tipeo</span>
+              <span style="color:#ef4444;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)"><img src="assets/icons/cross.svg" width="12" height="12" alt="" style="vertical-align:middle;margin-right:2px">Datos duplicados</span>
             </div>
             <div class="ba-time">4 horas</div>
           </div>
@@ -413,8 +417,8 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
             <div class="ba-badge">DESPUÉS — Automatizado</div>
             <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;text-shadow:0 1px 4px rgba(0,0,0,0.6)">Dashboard inteligente, sincronización en tiempo real</div>
             <div style="display:flex;gap:12px;margin-top:12px">
-              <span style="color:#20E070;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)">✓ Datos precisos</span>
-              <span style="color:#20E070;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)">✓ Reportes automáticos</span>
+              <span style="color:#20E070;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)"><img src="assets/icons/check-mark.svg" width="12" height="12" alt="" style="vertical-align:middle;margin-right:2px">Datos precisos</span>
+              <span style="color:#20E070;font-size:0.75rem;text-shadow:0 1px 4px rgba(0,0,0,0.5)"><img src="assets/icons/check-mark.svg" width="12" height="12" alt="" style="vertical-align:middle;margin-right:2px">Reportes automáticos</span>
             </div>
             <div class="ba-time">8 minutos</div>
           </div>
@@ -475,23 +479,23 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
       <p>Cada sector tiene desafíos únicos. Así los resolvemos con automatización inteligente.</p>
     </div>
     <div class="tabs-nav" id="tabsNav">
-      <button class="tab-btn active" data-tab="retail">🏪 Retail y E-commerce</button>
-      <button class="tab-btn" data-tab="salud">🏥 Salud</button>
-      <button class="tab-btn" data-tab="logistica">🚚 Logística</button>
-      <button class="tab-btn" data-tab="finanzas">🏦 Finanzas</button>
-      <button class="tab-btn" data-tab="manufactura">🏭 Manufactura</button>
+      <button class="tab-btn active" data-tab="retail"><img src="assets/icons/retail.svg" width="22" height="22" alt=""> Retail y E-commerce</button>
+      <button class="tab-btn" data-tab="salud"><img src="assets/icons/health.svg" width="22" height="22" alt=""> Salud</button>
+      <button class="tab-btn" data-tab="logistica"><img src="assets/icons/logistics.svg" width="22" height="22" alt=""> Logística</button>
+      <button class="tab-btn" data-tab="finanzas"><img src="assets/icons/bank.svg" width="22" height="22" alt=""> Finanzas</button>
+      <button class="tab-btn" data-tab="manufactura"><img src="assets/icons/factory.svg" width="22" height="22" alt=""> Manufactura</button>
     </div>
     <div class="tab-panels">
       <div class="tab-panel active" id="panel-retail">
         <div class="industry-grid">
           <div class="industry-card">
-            <div class="ind-icon">📦</div>
+            <img src="assets/icons/package.svg" class="ind-icon" alt="">
             <h4>Sincronización de Inventario</h4>
             <p class="ind-problem">El inventario entre tienda física y online se desfasa constantemente, causando ventas perdidas y sobrestock.</p>
             <span class="ind-metric">↓ 85% errores de inventario</span>
           </div>
           <div class="industry-card">
-            <div class="ind-icon">💬</div>
+            <img src="assets/icons/chat.svg" class="ind-icon" alt="">
             <h4>Atención al Cliente 24/7</h4>
             <p class="ind-problem">Consultas repetitivas sobre estados de pedido consumen horas del equipo de soporte cada día.</p>
             <span class="ind-metric">↓ 60% tickets de soporte</span>
@@ -501,13 +505,13 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
       <div class="tab-panel" id="panel-salud">
         <div class="industry-grid">
           <div class="industry-card">
-            <div class="ind-icon">📋</div>
+            <img src="assets/icons/clipboard.svg" class="ind-icon" alt="">
             <h4>Digitalización de Historias Clínicas</h4>
             <p class="ind-problem">Expedientes en papel difíciles de buscar y propensos a pérdida. Actualización manual que consume horas del personal.</p>
             <span class="ind-metric">↓ 70% tiempo de búsqueda</span>
           </div>
           <div class="industry-card">
-            <div class="ind-icon">📅</div>
+            <img src="assets/icons/calendar.svg" class="ind-icon" alt="">
             <h4>Recordatorios Automáticos</h4>
             <p class="ind-problem">Citas perdidas por falta de confirmación. El personal dedica horas a llamar pacientes uno por uno.</p>
             <span class="ind-metric">↓ 45% citas perdidas</span>
@@ -517,13 +521,13 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
       <div class="tab-panel" id="panel-logistica">
         <div class="industry-grid">
           <div class="industry-card">
-            <div class="ind-icon">🚛</div>
+            <img src="assets/icons/truck.svg" class="ind-icon" alt="">
             <h4>Seguimiento de Flota en Tiempo Real</h4>
             <p class="ind-problem">Actualizaciones manuales de estado de entregas. Clientes llamando para saber dónde está su pedido.</p>
             <span class="ind-metric">↓ 90% llamadas de estado</span>
           </div>
           <div class="industry-card">
-            <div class="ind-icon">📊</div>
+            <img src="assets/icons/barchart.svg" class="ind-icon" alt="">
             <h4>Optimización de Rutas</h4>
             <p class="ind-problem">Rutas planificadas sin datos de tráfico en tiempo real, generando demoras y costos extra de combustible.</p>
             <span class="ind-metric">↓ 25% costo combustible</span>
@@ -533,13 +537,13 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
       <div class="tab-panel" id="panel-finanzas">
         <div class="industry-grid">
           <div class="industry-card">
-            <div class="ind-icon">🧾</div>
+            <img src="assets/icons/receipt.svg" class="ind-icon" alt="">
             <h4>Procesamiento Automático de Facturas</h4>
             <p class="ind-problem">Extracción manual de datos de facturas, validación lenta y riesgo de errores en registros contables.</p>
             <span class="ind-metric">↓ 95% tiempo de procesamiento</span>
           </div>
           <div class="industry-card">
-            <div class="ind-icon">🔍</div>
+            <img src="assets/icons/search.svg" class="ind-icon" alt="">
             <h4>Detección de Anomalías</h4>
             <p class="ind-problem">Revisión manual de transacciones buscando irregularidades. Proceso mensual que toma días completos.</p>
             <span class="ind-metric">↓ 80% tiempo de auditoría</span>
@@ -549,13 +553,13 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
       <div class="tab-panel" id="panel-manufactura">
         <div class="industry-grid">
           <div class="industry-card">
-            <div class="ind-icon">🏭</div>
+            <img src="assets/icons/factory.svg" class="ind-icon" alt="">
             <h4>Mantenimiento Predictivo IoT</h4>
             <p class="ind-problem">Paradas de máquina no planificadas por falta de monitoreo en tiempo real. Mantenimiento reactivo costoso.</p>
             <span class="ind-metric">↓ 60% paradas no planificadas</span>
           </div>
           <div class="industry-card">
-            <div class="ind-icon">📈</div>
+            <img src="assets/icons/chart-up.svg" class="ind-icon" alt="">
             <h4>Control de Calidad Automatizado</h4>
             <p class="ind-problem">Inspección visual manual de productos, lenta y con variabilidad entre turnos y operadores.</p>
             <span class="ind-metric">↑ 40% velocidad de inspección</span>
@@ -661,7 +665,7 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
       <p>Las preguntas que más nos hacen sobre automatización empresarial</p>
     </div>
     <div class="faq-search-wrap">
-      <span class="search-icon">🔍</span>
+      <img src="assets/icons/search.svg" class="search-icon" alt="Buscar">
       <input type="text" placeholder="Buscar en preguntas frecuentes..." id="faqSearch" oninput="filterFAQ()">
     </div>
     <div class="faq-list">
@@ -701,7 +705,7 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
     <form id="ctaForm" onsubmit="handleCTASubmit(event)">
       <input type="email" placeholder="tu@empresa.com" required id="ctaEmail">
       <button type="submit" class="btn btn-primary">Quiero mi reporte gratis</button>
-      <div class="microcopy">🔒 Sin spam. Solo valor real. Nos odian los que aman las hojas de cálculo manuales.</div>
+      <div class="microcopy"><img src="assets/icons/padlock.svg" width="12" height="12" alt="" style="vertical-align:middle;margin-right:2px"> Sin spam. Solo valor real. Nos odian los que aman las hojas de cálculo manuales.</div>
     </form>
   </div>
 </section>
@@ -716,15 +720,15 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
       </div>
       <div class="footer-col">
         <h4>Producto</h4>
-        <button class="footer-link-btn" onclick="scrollToSection('demos')">Demo</button>
+        <a href="demo.html" class="footer-link-btn">Demo</a>
         <button class="footer-link-btn" onclick="scrollToSection('industrias')">Industrias</button>
         <button class="footer-link-btn" onclick="scrollToSection('faq')">FAQ</button>
       </div>
       <div class="footer-col">
         <h4>Empresa</h4>
-        <button class="footer-link-btn" onclick="scrollToSection('inicio')">Sobre Nosotros</button>
+        <a href="sobre-nosotros.html" class="footer-link-btn">Sobre Nosotros</a>
         <button class="footer-link-btn" onclick="scrollToSection('inicio')">Blog</button>
-        <button class="footer-link-btn" onclick="scrollToSection('inicio')">Contacto</button>
+        <a href="contacto.html" class="footer-link-btn">Contacto</a>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
@@ -741,7 +745,7 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
 
 <!-- CHATBOT -->
 <div class="chatbot" id="chatbot">
-  <button class="chatbot-toggle" onclick="toggleChatbot()" aria-label="Abrir chat">💬</button>
+  <button class="chatbot-toggle" onclick="toggleChatbot()" aria-label="Abrir chat"><img src="assets/icons/chat.svg" width="24" height="24" alt="Chat"></button>
   <div class="chatbot-window">
     <div class="chatbot-header">
       <span class="cb-status"></span>
@@ -751,7 +755,7 @@ footer{background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);pad
     <div class="chatbot-suggestions" id="chatSuggestions"></div>
     <div class="chatbot-input-row">
       <input type="text" class="chatbot-input" id="chatInput" placeholder="Escribe tu mensaje..." onkeypress="if(event.key==='Enter')sendMessage()">
-      <button class="chatbot-send" onclick="sendMessage()">➤</button>
+      <button class="chatbot-send" onclick="sendMessage()"><img src="assets/icons/send.svg" width="18" height="18" alt="Enviar"></button>
     </div>
   </div>
 </div>
@@ -982,7 +986,7 @@ function handleCTASubmit(e){
   e.preventDefault();
   var btn=e.target.querySelector('button');
   var orig=btn.textContent;
-  btn.textContent='✅ Enviado!';
+  btn.innerHTML='<img src="assets/icons/check.svg" width="16" height="16" alt="" style="vertical-align:middle;margin-right:4px"> Enviado!';
   btn.style.background='#1cc060';
   setTimeout(function(){btn.textContent=orig;btn.style.background='';document.getElementById('ctaEmail').value=''},3000);
 }

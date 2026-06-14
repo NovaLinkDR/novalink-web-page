@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "sobre-nosotros.html",
+  "entry": "sobre-nosotros.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-06-14T01:38:08.367Z",
+  "updatedAt": "2026-06-14T01:38:08.367Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}
